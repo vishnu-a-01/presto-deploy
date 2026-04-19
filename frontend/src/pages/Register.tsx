@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { AuthRegister } from "../api/api";
+import { useAuth } from "../AuthContext";
 type RegisterData = {
   name: string;
   email: string;
@@ -33,6 +35,7 @@ const validateRegister = (data: RegisterData) => {
 };
 export default function Register() {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const {
     register,
@@ -55,7 +58,17 @@ export default function Register() {
     }
 
     try {
-      navigate("/dashboard");
+      const res = await AuthRegister({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      }); 
+      if (res.error) {
+        console.error(res.error);
+      } else {
+        auth.login({name: data.name, email: data.email, token: res.token });
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error(err);
     }

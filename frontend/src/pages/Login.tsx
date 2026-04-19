@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { AuthLogin } from "../api/api";
+import { useAuth } from "../AuthContext";
 
 type LoginData = {
   email: string;
@@ -21,6 +23,7 @@ const validateLogin = (data: LoginData) => {
 };
 export default function Login() {
   const navigate = useNavigate();
+  const auth = useAuth();
   const {
     register,
     handleSubmit,
@@ -42,7 +45,14 @@ export default function Login() {
     }
 
     try {
-      navigate("/dashboard");
+      const res = await AuthLogin(data);
+      if (res.error) {
+        console.error(res.error);
+      } else {
+        console.log(res)
+        auth.login({name: '', email: data.email, token: res.token });
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error(err);
     }
