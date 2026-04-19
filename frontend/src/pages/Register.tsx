@@ -1,4 +1,4 @@
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthRegister } from "../api/api";
 import { useAuth } from "../AuthContext";
