@@ -7,16 +7,53 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<RegisterData>();
   type RegisterData = {
     name: string;
     email: string;
     password: string;
+    confirmPassword: string;
   };
+  const validateRegister = (data: RegisterData) => {
+    const errors: Partial<Record<keyof RegisterData, string>> = {};
 
+    if (!data.name) {
+      errors.name = "Name is required";
+    }
+
+    if (!data.email) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      errors.email = "Invalid email format";
+    }
+
+    if (!data.password) {
+      errors.password = "Password is required";
+    } else if (data.password.length < 6) {
+      errors.password = "Minimum 6 characters";
+    }
+
+    if (data.password !== data.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    return errors;
+  };
   const onSubmit = async (data: RegisterData) => {
-    console.log(data);
+    const validationErrors = validateRegister(data);
+
+    if (Object.keys(validationErrors).length > 0) {
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        setError(field as keyof RegisterData, {
+          type: "manual",
+          message,
+        });
+      });
+      return;
+    }
+
     try {
       navigate("/dashboard");
     } catch (err) {
@@ -59,6 +96,19 @@ export default function Register() {
           type="password"
           {...register("password")}
         />
+        {errors.password && (
+          <p className="text-red-400 text-sm">{errors.password.message}</p>
+        )}
+
+        <input
+          className="px-3 py-2 rounded bg-white/10 outline-none"
+          placeholder="Confirm Password"
+          type="password"
+          {...register("confirmPassword")}
+        />
+        {errors.confirmPassword && (
+          <p className="text-red-400 text-sm">{errors.confirmPassword.message}</p>
+        )}
         {errors.password && (
           <p className="text-red-400 text-sm">{errors.password.message}</p>
         )}
