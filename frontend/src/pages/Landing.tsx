@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom'
+
 export default function Landing() {
+  const navigate = useNavigate()
   return (
     <div className="min-h-screen w-full overflow-hidden flex flex-col items-center justify-center ">
       <h1 className="text-6xl font-bold mb-4">Presto Slides</h1>
@@ -8,13 +11,20 @@ export default function Landing() {
       </p>
 
       <div className="flex gap-4">
-        <button className="px-6 py-3">
-          Login
-        </button>
-        <button className="px-6 py-3">
-          Register
-        </button>
-      </div>
+      <button
+        className="btn btn-secondary"
+        onClick={() => navigate("/login")}
+      >
+        Login
+      </button>
+
+      <button
+        className="btn btn-primary"
+        onClick={() => navigate("/register")}
+      >
+        Register
+      </button>
+    </div>
     </div>
   )
 }
