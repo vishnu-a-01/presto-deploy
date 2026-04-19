@@ -11,16 +11,19 @@ type AuthContextType = {
   login: (user: User) => void
   logout: () => void
   isAuthenticated: boolean
+  loading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const saved = localStorage.getItem("user")
     if (saved) setUser(JSON.parse(saved))
+        setLoading(false)
   }, [])
 
   const login = (user: User) => {
@@ -40,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         isAuthenticated: !!user?.token,
+        loading,
       }}
     >
       {children}
