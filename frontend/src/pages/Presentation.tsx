@@ -15,6 +15,90 @@ export default function Presentation() {
   const [showEditThumbnail, setShowEditThumbnail] = useState(false);
   const [error, setErrorMessage] = useState<string | null>(null);
 
+  const [slides, setSlides] = useState<Record<string, { id: string }>>({});
+const [currentIndex, setCurrentIndex] = useState(0);
+
+useEffect(() => {
+  const presentations = JSON.parse(
+    localStorage.getItem("presentations") || "[]",
+  );
+  const presentation = presentations[id!];
+
+  setTitle(presentation.name);
+  setThumbnail(presentation.thumbnail || "");
+  setEditedThumbnail(presentation.thumbnail || "");
+
+  if (presentation.slides && Object.keys(presentation.slides).length > 0) {
+    setSlides(presentation.slides);
+  } else {
+    const newSlide = { id: crypto.randomUUID() };
+    setSlides({ [newSlide.id]: newSlide });
+  }
+}, []);
+
+const saveSlides = async (newSlides: Record<string, any>) => {
+  const presentations = JSON.parse(
+    localStorage.getItem("presentations") || "[]",
+  );
+
+  presentations[id!].slides = newSlides;
+  localStorage.setItem("presentations", JSON.stringify(presentations));
+
+  try {
+    await UpdateStore(JSON.parse(localStorage.getItem("user")!).token, {
+      presentations,
+    });
+  } catch {
+    setErrorMessage("Failed to update slides");
+  }
+};
+
+const addSlide = () => {
+  const newSlide = { id: crypto.randomUUID() };
+  const newSlides = { ...slides, [newSlide.id]: newSlide };
+  setSlides(newSlides);
+  setCurrentIndex(Object.keys(newSlides).length - 1);
+  saveSlides(newSlides);
+};
+
+const deleteSlide = () => {
+  const keys = Object.keys(slides);
+
+  if (keys.length === 1) {
+    setErrorMessage("Delete presentation instead");
+    return;
+  }
+
+  const newSlides = { ...slides };
+  delete newSlides[keys[currentIndex]];
+
+  setSlides(newSlides);
+  setCurrentIndex(Math.max(0, currentIndex - 1));
+  saveSlides(newSlides);
+};
+
+const goNext = () => {
+  if (currentIndex < Object.keys(slides).length - 1) {
+    setCurrentIndex((i) => i + 1);
+  }
+};
+
+const goPrev = () => {
+  if (currentIndex > 0) {
+    setCurrentIndex((i) => i - 1);
+  }
+};
+
+useEffect(() => {
+  const handleKey = (e: KeyboardEvent) => {
+    if (e.key === "ArrowRight") goNext();
+    if (e.key === "ArrowLeft") goPrev();
+  };
+
+  window.addEventListener("keydown", handleKey);
+  return () => window.removeEventListener("keydown", handleKey);
+}, [currentIndex, slides]);
+
   const updateThumbnail = async (newThumbnail: string) => {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
@@ -66,17 +150,6 @@ export default function Presentation() {
     }
   };
 
-  useEffect(() => {
-    const presentations = JSON.parse(
-      localStorage.getItem("presentations") || "[]",
-    );
-    const presentation = presentations[id!];
-
-    setTitle(presentation.name);
-    setThumbnail(presentation.thumbnail || "");
-    setEditedThumbnail(presentation.thumbnail || "");
-  }, []);
-
   return (
     <div className="h-screen bg-black text-white flex flex-col">
       <div className="flex justify-between items-center p-4 border-b border-white/10">
@@ -90,33 +163,74 @@ export default function Presentation() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-semibold">{title}</h1>
-            <button
-              className="text-sm text-gray-400 hover:text-white"
-              onClick={() => setShowEditTitle(true)}
-            >
-              ✏️
-            </button>
+            <button onClick={() => setShowEditTitle(true)}>✏️</button>
           </div>
-          <div>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setShowEditThumbnail(true)}
-            >
-              Edit thumbnail
-            </button>
-          </div>
+
+          <button
+            className="btn btn-secondary"
+            onClick={() => setShowEditThumbnail(true)}
+          >
+            Edit thumbnail
+          </button>
         </div>
+
         <button
-          className="btn bg-red-500 text-white hover:bg-red-600"
+          className="btn bg-red-500 hover:bg-red-600"
           onClick={() => setShowDelete(true)}
         >
           Delete
         </button>
       </div>
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-[600px] h-[300px] bg-white/10 rounded-lg flex items-center justify-center">
-          Slide Content
+
+      <div className="flex-1 flex flex-col items-center justify-center gap-4">
+        <div className="flex gap-4">
+          <button className="btn btn-primary" onClick={addSlide}>
+            + New Slide
+          </button>
+
+          <button
+            className="btn bg-red-500 hover:bg-red-600"
+            onClick={deleteSlide}
+          >
+            Delete Slide
+          </button>
         </div>
+
+        <div className="relative w-[70%] aspect-[2/1] bg-white/10 rounded-lg flex items-center justify-center">
+          <p className="text-gray-400">Slide Content</p>
+
+          <div className="absolute bottom-2 left-3 text-xs text-gray-400">
+            {currentIndex + 1}
+          </div>
+        </div>
+
+        {Object.values(slides).length > 1 && (
+          <div className="flex gap-6">
+            <button
+              onClick={goPrev}
+              disabled={currentIndex === 0}
+              className={`px-4 py-2 rounded ${
+                currentIndex === 0
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-white text-black"
+              }`}
+            >
+              ←
+            </button>
+
+            <button
+              onClick={goNext}
+              disabled={currentIndex === Object.values(slides).length - 1}
+              className={`px-4 py-2 rounded ${
+                currentIndex === Object.values(slides).length - 1
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-white text-black"
+              }`}
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
 
       {showDelete && (
