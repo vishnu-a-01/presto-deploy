@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthLogin } from "../api/api";
 import { useAuth } from "../AuthContext";
+import { useState } from "react";
+import ErrorPopup from "./Error";
 
 type LoginData = {
   email: string;
@@ -30,6 +32,7 @@ export default function Login() {
     setError,
     formState: { errors },
   } = useForm<LoginData>();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const onSubmit = async (data: LoginData) => {
     const validationErrors = validateLogin(data);
@@ -48,13 +51,14 @@ export default function Login() {
       const res = await AuthLogin(data);
       if (res.error) {
         console.error(res.error);
+        setLoginError(res.error);
       } else {
-        console.log(res)
-        auth.login({name: '', email: data.email, token: res.token });
+        console.log(res);
+        auth.login({ name: "", email: data.email, token: res.token });
         navigate("/dashboard");
       }
     } catch (err) {
-      console.error(err);
+      setLoginError("An unexpected error occurred. Please try again.");
     }
   };
   return (
@@ -95,6 +99,12 @@ export default function Login() {
             Register
           </span>
         </p>
+        {loginError && (
+          <ErrorPopup
+            message={loginError}
+            onClose={() => setLoginError(null)}
+          />
+        )}
       </form>
     </div>
   );

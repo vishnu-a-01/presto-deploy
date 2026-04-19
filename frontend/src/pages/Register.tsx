@@ -1,7 +1,9 @@
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthRegister } from "../api/api";
 import { useAuth } from "../AuthContext";
+import { useState } from "react";
+import ErrorPopup from "./Error";
 type RegisterData = {
   name: string;
   email: string;
@@ -43,6 +45,7 @@ export default function Register() {
     setError,
     formState: { errors },
   } = useForm<RegisterData>();
+  const [registerError, setRegisterError] = useState<string | null>(null);
 
   const onSubmit = async (data: RegisterData) => {
     const validationErrors = validateRegister(data);
@@ -62,15 +65,16 @@ export default function Register() {
         name: data.name,
         email: data.email,
         password: data.password,
-      }); 
+      });
       if (res.error) {
         console.error(res.error);
+        setRegisterError(res.error);
       } else {
-        auth.login({name: data.name, email: data.email, token: res.token });
+        auth.login({ name: data.name, email: data.email, token: res.token });
         navigate("/dashboard");
       }
     } catch (err) {
-      console.error(err);
+      setRegisterError("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -142,6 +146,12 @@ export default function Register() {
           </span>
         </p>
       </form>
+      {registerError && (
+        <ErrorPopup
+          message={registerError}
+          onClose={() => setRegisterError(null)}
+        />
+      )}
     </div>
   );
 }
