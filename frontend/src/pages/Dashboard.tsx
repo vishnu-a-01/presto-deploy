@@ -8,7 +8,7 @@ type Presentation = {
   name: string;
   description?: string;
   thumbnail?: string;
-  slides: { id: string }[];
+  slides: {[key: string]: any};
 };
 export default function Dashboard() {
   const auth = useAuth();
@@ -48,7 +48,7 @@ export default function Dashboard() {
       name,
       description,
       thumbnail,
-      slides: [{ id: crypto.randomUUID() }],
+      slides: { [crypto.randomUUID()]: { id: crypto.randomUUID() } },
     };
 
     await updatePresentations(newPresentation);
@@ -133,7 +133,7 @@ export default function Dashboard() {
               <p className="text-xs text-gray-300">{p.description || ""}</p>
 
               <p className="text-xs mt-1 text-gray-400">
-                Slides: {p.slides.length}
+                Slides: {Object.keys(p.slides).length}
               </p>
             </div>
           </div>
