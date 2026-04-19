@@ -114,7 +114,6 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
-        {true && console.log(presentations) && <></>}
         {presentations.map((p) => (
           <div
             className="aspect-[2/1] relative rounded-lg overflow-hidden bg-gray-700 cursor-pointer"
