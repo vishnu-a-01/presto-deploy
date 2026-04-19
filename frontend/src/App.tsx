@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
+import Presentation from "./pages/Presentation";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         />
         <Route
           path="/presentation/:id"
-          element={<ProtectedRoute> Presentation</ProtectedRoute>}
+          element={<ProtectedRoute> <Presentation /></ProtectedRoute>}
         />
       </Routes>
     </>
