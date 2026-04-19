@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UpdateStore } from "../api/api";
 import ErrorPopup from "./Error";
 
@@ -27,6 +27,15 @@ export default function Presentation() {
       setErrorMessage("Failed to delete presentation");
     }
   };
+
+  useEffect(() => {
+    const presentations = JSON.parse(
+      localStorage.getItem("presentations") || "[]",
+    );
+    const presentation = presentations.find((p: any) => p.id === id);
+
+    setTitle(presentation.name);
+  }, []);
 
   return (
     <div className="h-screen bg-black text-white flex flex-col">
