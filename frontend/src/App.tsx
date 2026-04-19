@@ -16,6 +16,10 @@ function App() {
           path="/dashboard"
           element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
         />
+        <Route
+          path="/presentation/:id"
+          element={<ProtectedRoute> Presentation</ProtectedRoute>}
+        />
       </Routes>
     </>
   );
