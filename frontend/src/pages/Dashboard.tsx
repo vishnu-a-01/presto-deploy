@@ -30,13 +30,19 @@ export default function Dashboard() {
     void fetchPresentations();
   }, [auth.user]);
 
+  useEffect(() => {
+    localStorage.setItem("presentations", JSON.stringify(presentations));
+  }, [presentations]);
+
   const updatePresentations = async (presentation: Presentation) => {
     const index = presentations.findIndex((p) => p.id === presentation.id);
     console.log(presentations, presentation, index);
     const updated =
       index === -1
         ? [...presentations, presentation]
-        : presentations.map((p) => (p.id === presentation.id ? presentation : p));
+        : presentations.map((p) =>
+            p.id === presentation.id ? presentation : p,
+          );
 
     setPresentations(updated);
     await UpdateStore(auth.user!.token, { presentations: updated });
@@ -132,9 +138,7 @@ export default function Dashboard() {
             <div className="absolute bottom-0 p-3 text-white">
               <h2 className="font-semibold">{p.name}</h2>
 
-              <p className="text-xs text-gray-300">
-                {p.description || ""}
-              </p>
+              <p className="text-xs text-gray-300">{p.description || ""}</p>
 
               <p className="text-xs mt-1 text-gray-400">
                 Slides: {p.slides.length}
