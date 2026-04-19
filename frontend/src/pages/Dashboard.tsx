@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+import { GetStore, UpdateStore } from "../api/api";
 
 type Presentation = {
   id: string;
@@ -20,7 +21,28 @@ export default function Dashboard() {
   const [description, setDescription] = useState("");
   const [thumbnail, setThumbnail] = useState("");
 
-  const createPresentation = () => {
+  useEffect(() => {
+    const fetchPresentations = async () => {
+      const res = await GetStore(auth.user!.token);
+      setPresentations(res.store.presentations || []);
+    };
+
+    void fetchPresentations();
+  }, [auth.user]);
+
+  const updatePresentations = async (presentation: Presentation) => {
+    const index = presentations.findIndex((p) => p.id === presentation.id);
+    console.log(presentations, presentation, index);
+    const updated =
+      index === -1
+        ? [...presentations, presentation]
+        : presentations.map((p) => (p.id === presentation.id ? presentation : p));
+
+    setPresentations(updated);
+    await UpdateStore(auth.user!.token, { presentations: updated });
+  };
+
+  const createPresentation = async () => {
     if (!name.trim()) return;
 
     const newPresentation: Presentation = {
@@ -31,7 +53,7 @@ export default function Dashboard() {
       slides: [{ id: crypto.randomUUID() }],
     };
 
-    setPresentations((prev) => [...prev, newPresentation]);
+    await updatePresentations(newPresentation);
     setName("");
     setDescription("");
     setThumbnail("");
@@ -92,6 +114,7 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
+        {true && console.log(presentations) && <></>}
         {presentations.map((p) => (
           <div
             className="aspect-[2/1] relative rounded-lg overflow-hidden bg-gray-700 cursor-pointer"

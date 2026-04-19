@@ -34,12 +34,12 @@ export async function GetStore(token: string) {
 
 export async function UpdateStore(token: string, storeData: { presentations: any[] }) {
     const res = await fetch(`http://localhost:${BACKEND_PORT}/store`, {
-        method: "POST",
+        method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(storeData)
+        body: JSON.stringify({store: storeData})
     });
     return res.json();
 }
