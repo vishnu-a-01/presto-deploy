@@ -35,6 +35,10 @@
   .btn-secondary {
     @apply px-6 py-3 rounded-lg font-medium cursor-pointer transition border border-white/40 text-white hover:border-white;
   }
+
+  .btn-logout {
+    @apply px-6 py-3 rounded-lg font-medium cursor-pointer transition border border-white/40 bg-red-500 text-white hover:bg-red-600;
+  }
 }
 
 html, body, #root {
