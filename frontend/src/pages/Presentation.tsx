@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { UpdateStore } from "../api/api";
 import ErrorPopup from "./Error";
+import { set } from "react-hook-form";
 
 export default function Presentation() {
   const { id } = useParams();
@@ -9,8 +10,28 @@ export default function Presentation() {
 
   const [title, setTitle] = useState("My Presentation");
   const [showDelete, setShowDelete] = useState(false);
+  const [showEditTitle, setShowEditTitle] = useState(false);
   const [error, setErrorMessage] = useState<string | null>(null);
 
+  const updateTitle = async (newTitle: string) => {
+    const presentations = JSON.parse(
+      localStorage.getItem("presentations") || "[]",
+    );
+    const presentation = presentations.find((p: any) => p.id === id);
+    if (!presentation) return;
+    presentation.name = newTitle;
+    localStorage.setItem("presentations", JSON.stringify(presentations));
+
+    try {
+      await UpdateStore(JSON.parse(localStorage.getItem("user")!).token, {
+        presentations,
+      });
+      setTitle(newTitle);
+      setShowEditTitle(false);
+    } catch (err) {
+      setErrorMessage("Failed to update title");
+    }
+  };
   const deletePresentation = async () => {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
@@ -52,7 +73,7 @@ export default function Presentation() {
 
           <button
             className="text-sm text-gray-400 hover:text-white"
-            onClick={() => {}}
+            onClick={() => setShowEditTitle(true)}
           >
             ✏️
           </button>
@@ -87,6 +108,32 @@ export default function Presentation() {
                 No
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showEditTitle && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowEditTitle(false)}
+          />
+
+          <div className="relative bg-[#111] p-6 rounded-lg w-[300px] flex flex-col gap-3">
+            <h2 className="font-semibold">Edit Title</h2>
+
+            <input
+              className="px-3 py-2 rounded bg-white/10"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            <button
+              className="btn btn-primary"
+              onClick={() => updateTitle(title)}
+            >
+              Save
+            </button>
           </div>
         </div>
       )}
