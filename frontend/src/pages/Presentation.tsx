@@ -8,10 +8,30 @@ export default function Presentation() {
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("My Presentation");
+  const [thumbnail, setThumbnail] = useState("");
+  const [editedThumbnail, setEditedThumbnail] = useState("");
   const [showDelete, setShowDelete] = useState(false);
   const [showEditTitle, setShowEditTitle] = useState(false);
+  const [showEditThumbnail, setShowEditThumbnail] = useState(false);
   const [error, setErrorMessage] = useState<string | null>(null);
 
+  const updateThumbnail = async (newThumbnail: string) => {
+    const presentations = JSON.parse(
+      localStorage.getItem("presentations") || "[]",
+    );
+    presentations[id!].thumbnail = newThumbnail;
+    localStorage.setItem("presentations", JSON.stringify(presentations));
+
+    try {
+      await UpdateStore(JSON.parse(localStorage.getItem("user")!).token, {
+        presentations,
+      });
+      setThumbnail(newThumbnail);
+      setShowEditThumbnail(false);
+    } catch (err) {
+      setErrorMessage("Failed to update thumbnail");
+    }
+  };
   const updateTitle = async (newTitle: string) => {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
@@ -53,6 +73,8 @@ export default function Presentation() {
     const presentation = presentations[id!];
 
     setTitle(presentation.name);
+    setThumbnail(presentation.thumbnail || "");
+    setEditedThumbnail(presentation.thumbnail || "");
   }, []);
 
   return (
@@ -65,15 +87,24 @@ export default function Presentation() {
           Back
         </button>
 
-        <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold">{title}</h1>
-
-          <button
-            className="text-sm text-gray-400 hover:text-white"
-            onClick={() => setShowEditTitle(true)}
-          >
-            ✏️
-          </button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold">{title}</h1>
+            <button
+              className="text-sm text-gray-400 hover:text-white"
+              onClick={() => setShowEditTitle(true)}
+            >
+              ✏️
+            </button>
+          </div>
+          <div>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowEditThumbnail(true)}
+            >
+              Edit thumbnail
+            </button>
+          </div>
         </div>
         <button
           className="btn bg-red-500 text-white hover:bg-red-600"
@@ -81,6 +112,11 @@ export default function Presentation() {
         >
           Delete
         </button>
+      </div>
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-[600px] h-[300px] bg-white/10 rounded-lg flex items-center justify-center">
+          Slide Content
+        </div>
       </div>
 
       {showDelete && (
@@ -129,6 +165,34 @@ export default function Presentation() {
               className="btn btn-primary"
               onClick={() => updateTitle(title)}
             >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showEditThumbnail && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => {setEditedThumbnail(thumbnail);setShowEditThumbnail(false)}}
+          />
+
+          <div className="relative bg-[#111] p-6 rounded-lg w-[300px] flex flex-col gap-3">
+            <h2 className="font-semibold">Edit Thumbnail</h2>
+            <img
+              src={editedThumbnail || "https://via.placeholder.com/150"}
+              alt="Thumbnail"
+              className="w-full h-40 object-cover rounded"
+            />
+            <input
+              className="px-3 py-2 rounded bg-white/10"
+              placeholder="Thumbnail URL"
+              value={editedThumbnail}
+              onChange={(e) => setEditedThumbnail(e.target.value)}
+            />
+
+            <button className="btn btn-primary" onClick={() => updateThumbnail(editedThumbnail)}>
               Save
             </button>
           </div>
