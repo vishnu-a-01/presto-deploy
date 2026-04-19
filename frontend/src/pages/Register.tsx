@@ -1,6 +1,36 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+type RegisterData = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+const validateRegister = (data: RegisterData) => {
+  const errors: Partial<Record<keyof RegisterData, string>> = {};
 
+  if (!data.name) {
+    errors.name = "Name is required";
+  }
+
+  if (!data.email) {
+    errors.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    errors.email = "Invalid email format";
+  }
+
+  if (!data.password) {
+    errors.password = "Password is required";
+  } else if (data.password.length < 6) {
+    errors.password = "Minimum 6 characters";
+  }
+
+  if (data.password !== data.confirmPassword) {
+    errors.confirmPassword = "Passwords do not match";
+  }
+
+  return errors;
+};
 export default function Register() {
   const navigate = useNavigate();
 
@@ -10,37 +40,7 @@ export default function Register() {
     setError,
     formState: { errors },
   } = useForm<RegisterData>();
-  type RegisterData = {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  };
-  const validateRegister = (data: RegisterData) => {
-    const errors: Partial<Record<keyof RegisterData, string>> = {};
 
-    if (!data.name) {
-      errors.name = "Name is required";
-    }
-
-    if (!data.email) {
-      errors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      errors.email = "Invalid email format";
-    }
-
-    if (!data.password) {
-      errors.password = "Password is required";
-    } else if (data.password.length < 6) {
-      errors.password = "Minimum 6 characters";
-    }
-
-    if (data.password !== data.confirmPassword) {
-      errors.confirmPassword = "Passwords do not match";
-    }
-
-    return errors;
-  };
   const onSubmit = async (data: RegisterData) => {
     const validationErrors = validateRegister(data);
 
@@ -107,7 +107,9 @@ export default function Register() {
           {...register("confirmPassword")}
         />
         {errors.confirmPassword && (
-          <p className="text-red-400 text-sm">{errors.confirmPassword.message}</p>
+          <p className="text-red-400 text-sm">
+            {errors.confirmPassword.message}
+          </p>
         )}
         {errors.password && (
           <p className="text-red-400 text-sm">{errors.password.message}</p>
