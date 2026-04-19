@@ -2,7 +2,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { UpdateStore } from "../api/api";
 import ErrorPopup from "./Error";
-import { set } from "react-hook-form";
 
 export default function Presentation() {
   const { id } = useParams();
@@ -17,9 +16,7 @@ export default function Presentation() {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
     );
-    const presentation = presentations.find((p: any) => p.id === id);
-    if (!presentation) return;
-    presentation.name = newTitle;
+    presentations[id!].name = newTitle;
     localStorage.setItem("presentations", JSON.stringify(presentations));
 
     try {
@@ -36,12 +33,12 @@ export default function Presentation() {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
     );
-    const updated = presentations.filter((p: any) => p.id !== id);
-    localStorage.setItem("presentations", JSON.stringify(updated));
+    delete presentations[id!];
+    localStorage.setItem("presentations", JSON.stringify(presentations));
 
     try {
       await UpdateStore(JSON.parse(localStorage.getItem("user")!).token, {
-        presentations: updated,
+        presentations,
       });
       navigate("/dashboard");
     } catch (err) {
@@ -53,7 +50,7 @@ export default function Presentation() {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
     );
-    const presentation = presentations.find((p: any) => p.id === id);
+    const presentation = presentations[id!];
 
     setTitle(presentation.name);
   }, []);

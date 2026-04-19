@@ -32,7 +32,7 @@ export async function GetStore(token: string) {
     return res.json();
 }
 
-export async function UpdateStore(token: string, storeData: { presentations: any[] }) {
+export async function UpdateStore(token: string, storeData: { presentations: any }) {
     const res = await fetch(`http://localhost:${BACKEND_PORT}/store`, {
         method: "PUT",
         headers: {

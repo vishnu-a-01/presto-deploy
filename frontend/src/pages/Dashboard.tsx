@@ -14,7 +14,7 @@ export default function Dashboard() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [presentations, setPresentations] = useState<Presentation[]>([]);
+  const [presentations, setPresentations] = useState<{ [key: string]: Presentation }>({});
   const [isOpen, setIsOpen] = useState(false);
 
   const [name, setName] = useState("");
@@ -35,17 +35,9 @@ export default function Dashboard() {
   }, [presentations]);
 
   const updatePresentations = async (presentation: Presentation) => {
-    const index = presentations.findIndex((p) => p.id === presentation.id);
-    console.log(presentations, presentation, index);
-    const updated =
-      index === -1
-        ? [...presentations, presentation]
-        : presentations.map((p) =>
-            p.id === presentation.id ? presentation : p,
-          );
-
-    setPresentations(updated);
-    await UpdateStore(auth.user!.token, { presentations: updated });
+    presentations[presentation.id] = presentation;
+    setPresentations({ ...presentations });
+    await UpdateStore(auth.user!.token, { presentations });
   };
 
   const createPresentation = async () => {
@@ -120,7 +112,7 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
-        {presentations.map((p) => (
+        {Object.values(presentations).map((p) => (
           <div
             className="aspect-[2/1] relative rounded-lg overflow-hidden bg-gray-700 cursor-pointer"
             key={p.id}
