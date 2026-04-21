@@ -39,6 +39,10 @@
   .btn-logout {
     @apply px-6 py-3 rounded-lg font-medium cursor-pointer transition border border-white/40 bg-red-500 text-white hover:bg-red-600;
   }
+
+  .icon-btn {
+    @apply w-6 h-6 bg-white text-black rounded font-bold shadow flex items-center justify-center transition hover:bg-gray-200;
+  }
 }
 @media (max-width: 640px) {
   .btn {
@@ -52,13 +56,15 @@
   .btn-secondary {
     @apply text-sm;
   }
-  
-    .icon-btn {
+
+  .icon-btn {
     @apply w-8 h-8 text-sm;
   }
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
   margin: 0;
