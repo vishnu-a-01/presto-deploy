@@ -18,6 +18,13 @@ export default function Presentation() {
   const [slides, setSlides] = useState<Record<string, { id: string }>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const [showTextModal, setShowTextModal] = useState(false);
+  const [textValue, setTextValue] = useState("");
+  const [textWidth, setTextWidth] = useState(50);
+  const [textHeight, setTextHeight] = useState(20);
+  const [fontSize, setFontSize] = useState(1);
+  const [color, setColor] = useState("#ffffff");
+
   useEffect(() => {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
@@ -182,56 +189,123 @@ export default function Presentation() {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center gap-4">
-        <div className="flex gap-4">
-          <button className="btn btn-primary" onClick={addSlide}>
-            + New Slide
-          </button>
-
-          <button
-            className="btn bg-red-500 hover:bg-red-600"
-            onClick={deleteSlide}
-          >
-            Delete Slide
-          </button>
-        </div>
-
-        <div className="relative w-[70%] aspect-[2/1] bg-white/10 rounded-lg flex items-center justify-center">
-          <p className="text-gray-400">Slide Content</p>
-
-          <div className="absolute bottom-2 left-3 text-xs text-gray-400">
-            {currentIndex + 1}
-          </div>
-        </div>
-
-        {Object.values(slides).length > 1 && (
-          <div className="flex gap-6">
+      <div className="flex-1 flex items-center justify-center">
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col gap-2">
             <button
-              onClick={goPrev}
-              disabled={currentIndex === 0}
-              className={`px-4 py-2 rounded ${
-                currentIndex === 0
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-white text-black"
-              }`}
+              className="icon-btn bg-white text-black rounded font-bold shadow"
+              onClick={() => setShowTextModal(true)}
             >
-              ←
-            </button>
-
-            <button
-              onClick={goNext}
-              disabled={currentIndex === Object.values(slides).length - 1}
-              className={`px-4 py-2 rounded ${
-                currentIndex === Object.values(slides).length - 1
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-white text-black"
-              }`}
-            >
-              →
+              T
             </button>
           </div>
-        )}
+
+          <div className="flex flex-col items-center justify-center gap-4">
+            <div className="flex gap-4">
+              <button className="btn btn-primary" onClick={addSlide}>
+                + New Slide
+              </button>
+
+              <button
+                className="btn bg-red-500 hover:bg-red-600"
+                onClick={deleteSlide}
+              >
+                Delete Slide
+              </button>
+            </div>
+
+            <div className="relative w-[70vw] max-w-[1400px] aspect-[2/1] bg-white/10 rounded-lg flex items-center justify-center">
+              <p className="text-gray-400">Slide Content</p>
+
+              <div className="absolute bottom-2 left-3 text-xs text-gray-400">
+                {currentIndex + 1}
+              </div>
+            </div>
+
+            {Object.values(slides).length > 1 && (
+              <div className="flex gap-6">
+                <button
+                  onClick={goPrev}
+                  disabled={currentIndex === 0}
+                  className={`px-4 py-2 rounded ${
+                    currentIndex === 0
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-white text-black"
+                  }`}
+                >
+                  ←
+                </button>
+
+                <button
+                  onClick={goNext}
+                  disabled={currentIndex === Object.values(slides).length - 1}
+                  className={`px-4 py-2 rounded ${
+                    currentIndex === Object.values(slides).length - 1
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-white text-black"
+                  }`}
+                >
+                  →
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
+      {showTextModal && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowTextModal(false)}
+          />
+
+          <div className="relative bg-[#111] p-6 rounded-lg w-[320px] flex flex-col gap-3">
+            <h2 className="font-semibold">Add Text</h2>
+
+            <input
+              className="px-3 py-2 rounded bg-white/10"
+              placeholder="Text"
+              value={textValue}
+              onChange={(e) => setTextValue(e.target.value)}
+            />
+
+            <input
+              type="number"
+              className="px-3 py-2 rounded bg-white/10"
+              placeholder="Width %"
+              value={textWidth}
+              onChange={(e) => setTextWidth(Number(e.target.value))}
+            />
+
+            <input
+              type="number"
+              className="px-3 py-2 rounded bg-white/10"
+              placeholder="Height %"
+              value={textHeight}
+              onChange={(e) => setTextHeight(Number(e.target.value))}
+            />
+
+            <input
+              type="number"
+              step="0.1"
+              className="px-3 py-2 rounded bg-white/10"
+              placeholder="Font size (em)"
+              value={fontSize}
+              onChange={(e) => setFontSize(Number(e.target.value))}
+            />
+
+            <input
+              className="px-3 py-2 rounded bg-white/10"
+              placeholder="#HEX color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+            />
+
+            <button className="btn btn-primary">Add</button>
+          </div>
+        </div>
+      )}
 
       {showDelete && (
         <div className="fixed inset-0 flex items-center justify-center">

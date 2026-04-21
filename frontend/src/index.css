@@ -52,6 +52,10 @@
   .btn-secondary {
     @apply text-sm;
   }
+  
+    .icon-btn {
+    @apply w-8 h-8 text-sm;
+  }
 }
 
 html, body, #root {
