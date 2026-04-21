@@ -1,4 +1,4 @@
-export type ElementType = "text" | "image" | "video" | "code";
+export type ElementType = "text" | "image" | "video" | "code" | "";
 
 export type SlideElement = {
   id: string;
@@ -10,8 +10,9 @@ export type SlideElement = {
   text?: string;
   fontSize?: number;
   color?: string;
-  src?: string;
   layer: number;
+  url?: string;
+  altText?: string;
 };
 
 export type Slide = {
