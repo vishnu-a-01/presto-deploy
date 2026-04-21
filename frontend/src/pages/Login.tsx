@@ -91,7 +91,7 @@ export default function Login() {
           Login
         </button>
         <p className="text-sm text-center text-gray-400">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <span
             className="text-white underline cursor-pointer"
             onClick={() => navigate("/register")}

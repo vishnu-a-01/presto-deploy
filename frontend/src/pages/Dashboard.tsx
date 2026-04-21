@@ -2,19 +2,14 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import { GetStore, UpdateStore } from "../api/api";
+import type { Presentation, Presentations, Slide } from "../types/types";
 
-type Presentation = {
-  id: string;
-  name: string;
-  description?: string;
-  thumbnail?: string;
-  slides: {[key: string]: any};
-};
+
 export default function Dashboard() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [presentations, setPresentations] = useState<{ [key: string]: Presentation }>({});
+  const [presentations, setPresentations] = useState<Presentations>({});
   const [isOpen, setIsOpen] = useState(false);
 
   const [name, setName] = useState("");
@@ -24,7 +19,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchPresentations = async () => {
       const res = await GetStore(auth.user!.token);
-      setPresentations(res.store.presentations || []);
+      setPresentations(res.store.presentations || {});
     };
 
     void fetchPresentations();
@@ -35,20 +30,26 @@ export default function Dashboard() {
   }, [presentations]);
 
   const updatePresentations = async (presentation: Presentation) => {
-    presentations[presentation.id] = presentation;
-    setPresentations({ ...presentations });
+    setPresentations({ ...presentations, [presentation.id]: presentation });
     await UpdateStore(auth.user!.token, { presentations });
   };
 
   const createPresentation = async () => {
     if (!name.trim()) return;
 
+    const slide_id = crypto.randomUUID();
+    const newSlide: Slide = {
+      id: slide_id,
+      elements: [],
+      position: 0,
+    };
+
     const newPresentation: Presentation = {
       id: crypto.randomUUID(),
       name,
       description,
       thumbnail,
-      slides: { [crypto.randomUUID()]: { id: crypto.randomUUID() } },
+      slides: { [slide_id]: newSlide },
     };
 
     await updatePresentations(newPresentation);

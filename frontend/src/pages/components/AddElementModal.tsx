@@ -1,52 +1,22 @@
-import { useEffect, useState } from "react";
 import type { ElementType, SlideElement } from "../../types/types";
 
 interface ElementModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: Partial<SlideElement>) => void;
-  initialData?: SlideElement | null;
-  elementType?: ElementType;
+  onSave: (_: Partial<SlideElement>) => void;
+  onChange: (_: Partial<SlideElement>) => void;
+  initialData: SlideElement;
+  elementType: ElementType;
 }
 
 export default function AddElementModal({
   isOpen,
   onClose,
   onSave,
+  onChange,
   initialData,
   elementType,
 }: ElementModalProps) {
-  const [formData, setFormData] = useState<Partial<SlideElement>>({
-    type: "text",
-    x: 0,
-    y: 0,
-    width: 20,
-    height: 10,
-    text: "",
-    fontSize: 1,
-    color: "#ffffff",
-    url: "",
-    altText: "",
-  });
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    } else {
-      setFormData({
-        type: elementType || "text",
-        x: 0,
-        y: 0,
-        width: 20,
-        height: 10,
-        text: "",
-        fontSize: 1,
-        color: "#ffffff",
-        url: "",
-        altText: "",
-      });
-    }
-  }, [initialData, isOpen, elementType]);
 
   if (!isOpen) return null;
 
@@ -56,23 +26,23 @@ export default function AddElementModal({
 
       <div className="relative bg-[#111] p-6 rounded-lg w-[320px] flex flex-col gap-3">
         <h2 className="font-semibold">
-          {formData.type === "image"
+          {elementType === "image"
             ? "Add Image"
-            : formData.type === "video"
+            : elementType === "video"
               ? "Add Video"
               : "Add Text"}
         </h2>
 
-        {initialData && (
+        {initialData.id && (
           <div className="flex gap-2">
             <div className="flex flex-col w-[50%]">
               <label className="text-xs text-gray-400 font-medium">x pos</label>
               <input
                 type="number"
                 className="input"
-                value={formData.x}
+                value={initialData.x}
                 onChange={(e) =>
-                  setFormData({ ...formData, x: Number(e.target.value) })
+                  onChange({ ...initialData, x: Number(e.target.value) })
                 }
               />
             </div>
@@ -81,24 +51,24 @@ export default function AddElementModal({
               <input
                 type="number"
                 className="input"
-                value={formData.y}
+                value={initialData.y}
                 onChange={(e) =>
-                  setFormData({ ...formData, y: Number(e.target.value) })
+                  onChange({ ...initialData, y: Number(e.target.value) })
                 }
               />
             </div>
           </div>
         )}
 
-        {formData.type === "text" && (
+        {elementType === "text" && (
           <>
             <div className="flex flex-col">
               <label className="text-xs text-gray-400 font-medium">Text</label>
               <input
                 className="input"
-                value={formData.text}
+                value={initialData.text}
                 onChange={(e) =>
-                  setFormData({ ...formData, text: e.target.value })
+                  onChange({ ...initialData, text: e.target.value })
                 }
               />
             </div>
@@ -111,10 +81,10 @@ export default function AddElementModal({
                 type="number"
                 step="0.1"
                 className="input"
-                value={formData.fontSize}
+                value={initialData.fontSize}
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
+                  onChange({
+                    ...initialData,
                     fontSize: Number(e.target.value),
                   })
                 }
@@ -125,25 +95,25 @@ export default function AddElementModal({
               <label className="text-xs text-gray-400 font-medium">Color</label>
               <input
                 className="input"
-                value={formData.color}
+                value={initialData.color}
                 onChange={(e) =>
-                  setFormData({ ...formData, color: e.target.value })
+                  onChange({ ...initialData, color: e.target.value })
                 }
               />
             </div>
           </>
         )}
 
-        {(formData.type === "image" || formData.type === "video") && (
+        {(elementType === "image" || elementType === "video") && (
           <>
             <div className="flex flex-col">
               <label className="text-xs text-gray-400 font-medium">URL</label>
               <input
                 className="input"
                 placeholder="https://..."
-                value={formData.url}
+                value={initialData.url}
                 onChange={(e) =>
-                  setFormData({ ...formData, url: e.target.value })
+                  onChange({ ...initialData, url: e.target.value })
                 }
               />
             </div>
@@ -152,9 +122,9 @@ export default function AddElementModal({
               <input
                 className="input"
                 placeholder="Enter alt text"
-                value={formData.altText}
+                value={initialData.altText}
                 onChange={(e) =>
-                  setFormData({ ...formData, altText: e.target.value })
+                  onChange({ ...initialData, altText: e.target.value })
                 }
               />
             </div>
@@ -166,9 +136,9 @@ export default function AddElementModal({
           <input
             type="number"
             className="input"
-            value={formData.width}
+            value={initialData.width}
             onChange={(e) =>
-              setFormData({ ...formData, width: Number(e.target.value) })
+              onChange({ ...initialData, width: Number(e.target.value) })
             }
           />
         </div>
@@ -178,14 +148,14 @@ export default function AddElementModal({
           <input
             type="number"
             className="input"
-            value={formData.height}
+            value={initialData.height}
             onChange={(e) =>
-              setFormData({ ...formData, height: Number(e.target.value) })
+              onChange({ ...initialData, height: Number(e.target.value) })
             }
           />
         </div>
 
-        <button className="btn btn-primary" onClick={() => onSave(formData)}>
+        <button className="btn btn-primary" onClick={() => onSave(initialData)}>
           Save
         </button>
       </div>

@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
+import React from "react"
+
 
 type User = {
   name: string
@@ -8,7 +10,7 @@ type User = {
 
 type AuthContextType = {
   user: User | null
-  login: (user: User) => void
+  login: (_: User) => void
   logout: () => void
   isAuthenticated: boolean
   loading: boolean

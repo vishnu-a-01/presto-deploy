@@ -23,8 +23,23 @@ export default function Presentation() {
 
   const [showAddElementModal, setShowAddElementModal] =
     useState<ElementType>("");
+
+  const emptyElement: SlideElement = {
+    id: "",
+    type: "",
+    x: 0,
+    y: 0,
+    width: 20,
+    height: 10,
+    layer: 0,
+    text: "",
+    fontSize: 1,
+    color: "#ffffff",
+    url: "",
+    altText: "",
+  };
   const [currentlyEditingElement, setEditingElement] =
-    useState<SlideElement | null>(null);
+    useState<SlideElement>(emptyElement);
 
   useEffect(() => {
     const presentations = JSON.parse(
@@ -198,16 +213,16 @@ export default function Presentation() {
     const elementToSave: SlideElement = {
       id: currentlyEditingElement?.id || crypto.randomUUID(),
       type: elementData.type || "text",
-      x: Number(elementData.x) || 0,
-      y: Number(elementData.y) || (last ? last.y + last.height + 1 : 0),
-      width: Number(elementData.width) || 20,
-      height: Number(elementData.height) || 10,
-      text: elementData.text || "",
-      fontSize: Number(elementData.fontSize) || 1,
-      color: elementData.color || "#ffffff",
+      x: Number(elementData.x),
+      y: currentlyEditingElement?.id ? Number(elementData.y) : (last ? last.y + last.height + 1 : 0),
+      width: Number(elementData.width),
+      height: Number(elementData.height),
+      text: elementData.text,
+      fontSize: Number(elementData.fontSize),
+      color: elementData.color,
       layer: currentlyEditingElement?.layer ?? slide.elements.length,
-      url: elementData.url || "",
-      altText: elementData.altText || "",
+      url: elementData.url,
+      altText: elementData.altText,
     };
 
     const updatedElements = isEditing
@@ -226,7 +241,7 @@ export default function Presentation() {
 
     setSlides(newSlides);
     saveSlides(newSlides);
-    setEditingElement(null);
+    setEditingElement(emptyElement);
     setShowAddElementModal("");
   };
 
@@ -371,10 +386,11 @@ export default function Presentation() {
         <AddElementModal
           isOpen={showAddElementModal ? true : false}
           onClose={() => {
-            setEditingElement(null);
+            setEditingElement(emptyElement);
             setShowAddElementModal("");
           }}
           onSave={addOrEditElement}
+          onChange={(data) => setEditingElement((e) => ({ ...e, ...data }))}
           initialData={currentlyEditingElement}
           elementType={showAddElementModal}
         />

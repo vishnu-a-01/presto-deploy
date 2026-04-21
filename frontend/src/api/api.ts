@@ -1,4 +1,5 @@
 import {BACKEND_PORT} from "../../backend.config.json";
+import type { Presentations } from "../types/types";
 export async function AuthLogin(loginData: { email: string; password: string }) {
   const res = await fetch(`http://localhost:${BACKEND_PORT}/admin/auth/login`, {
     method: "POST",
@@ -32,7 +33,7 @@ export async function GetStore(token: string) {
   return res.json();
 }
 
-export async function UpdateStore(token: string, storeData: { presentations: any }) {
+export async function UpdateStore(token: string, storeData: { presentations: Presentations }) {
   const res = await fetch(`http://localhost:${BACKEND_PORT}/store`, {
     method: "PUT",
     headers: {

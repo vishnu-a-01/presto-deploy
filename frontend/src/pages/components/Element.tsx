@@ -1,9 +1,10 @@
 import type { SlideElement } from "../../types/types";
+import React from "react";
 
 interface ElementProps {
   el: SlideElement;
-  onDelete: (id: string) => void;
-  onEdit: (el: SlideElement) => void;
+  onDelete: (_: string) => void;
+  onEdit: (_: SlideElement) => void;
 }
 
 export default function SlElement({ el, onDelete, onEdit }: ElementProps) {

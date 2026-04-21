@@ -24,3 +24,13 @@ export type Slide = {
 export type Slides = {
   [key: string]: Slide;
 };
+
+export type Presentation = {
+  id: string;
+  name: string;
+  description?: string;
+  thumbnail?: string;
+  slides: Slides;
+};
+
+export type Presentations = { [key: string]: Presentation };
