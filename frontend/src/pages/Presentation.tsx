@@ -4,6 +4,7 @@ import { UpdateStore } from "../api/api";
 import ErrorPopup from "./Error";
 type Slide = {
   id: string;
+  position: number;
   elements: {
     id: string;
     type: "text";
@@ -54,13 +55,14 @@ export default function Presentation() {
     } else {
       const newSlideId = crypto.randomUUID();
       setSlides({
-        [newSlideId]: { id: newSlideId, elements: [] },
+        [newSlideId]: { id: newSlideId, position: 0, elements: [] },
       });
     }
   }, []);
 
-  const getSlideKeys = () => Object.keys(slides);
-  const getCurrentSlide = () => slides[getSlideKeys()[currentIndex]];
+  const orderedSlides = Object.values(slides).sort((a, b) => a.position - b.position);
+
+  const getCurrentSlide = () => orderedSlides[currentIndex];
 
   useEffect(() => {
     setTextValue("");
@@ -87,19 +89,33 @@ export default function Presentation() {
     }
   };
 
+  const reindexSlides = (slides: Record<string, Slide>) => {
+    return Object.values(slides)
+      .sort((a, b) => a.position - b.position)
+      .reduce((acc, slide, idx) => {
+        acc[slide.id] = { ...slide, position: idx };
+        return acc;
+      }, {} as Record<string, Slide>);
+  };
+
   const addSlide = () => {
     const newId = crypto.randomUUID();
-    const newSlides = {
+    const newSlidesTemp = {
       ...slides,
-      [newId]: { id: newId, elements: [] },
+      [newId]: {
+        id: newId,
+        position: Object.keys(slides).length,
+        elements: [],
+      },
     };
+    const newSlides = reindexSlides(newSlidesTemp);
     setSlides(newSlides);
     setCurrentIndex(Object.keys(newSlides).length - 1);
     saveSlides(newSlides);
   };
 
   const deleteSlide = () => {
-    const keys = Object.keys(slides);
+    const keys = orderedSlides.map(s => s.id);
 
     if (keys.length === 1) {
       setErrorMessage("Delete presentation instead");
@@ -109,13 +125,15 @@ export default function Presentation() {
     const newSlides = { ...slides };
     delete newSlides[keys[currentIndex]];
 
-    setSlides(newSlides);
+    const reindexed = reindexSlides(newSlides);
+
+    setSlides(reindexed);
     setCurrentIndex(Math.max(0, currentIndex - 1));
-    saveSlides(newSlides);
+    saveSlides(reindexed);
   };
 
   const goNext = () => {
-    if (currentIndex < Object.keys(slides).length - 1) {
+    if (currentIndex < orderedSlides.length - 1) {
       setCurrentIndex((i) => i + 1);
     }
   };
@@ -188,7 +206,7 @@ export default function Presentation() {
   };
 
   const addTextElement = () => {
-    const keys = getSlideKeys();
+    const keys = orderedSlides.map(s => s.id);
     const slideId = keys[currentIndex];
     const slide = slides[slideId];
 
@@ -221,7 +239,7 @@ export default function Presentation() {
   };
 
   const deleteElement = (elId: string) => {
-    const keys = getSlideKeys();
+    const keys = orderedSlides.map(s => s.id);
     const slideId = keys[currentIndex];
     const slide = slides[slideId];
 
@@ -323,7 +341,7 @@ export default function Presentation() {
               </div>
             </div>
 
-            {Object.values(slides).length > 1 && (
+            {orderedSlides.length > 1 && (
               <div className="flex gap-6">
                 <button
                   onClick={goPrev}
@@ -339,9 +357,9 @@ export default function Presentation() {
 
                 <button
                   onClick={goNext}
-                  disabled={currentIndex === Object.values(slides).length - 1}
+                  disabled={currentIndex === orderedSlides.length - 1}
                   className={`px-4 py-2 rounded ${
-                    currentIndex === Object.values(slides).length - 1
+                    currentIndex === orderedSlides.length - 1
                       ? "bg-gray-600 cursor-not-allowed"
                       : "bg-white text-black"
                   }`}
