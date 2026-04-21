@@ -20,10 +20,10 @@ export default function Presentation() {
 
   const [showTextModal, setShowTextModal] = useState(false);
   const [textValue, setTextValue] = useState("");
-  const [textWidth, setTextWidth] = useState(50);
-  const [textHeight, setTextHeight] = useState(20);
-  const [fontSize, setFontSize] = useState(1);
-  const [color, setColor] = useState("#ffffff");
+  const [textWidth, setTextWidth] = useState("");
+  const [textHeight, setTextHeight] = useState("");
+  const [fontSize, setFontSize] = useState("");
+  const [color, setColor] = useState("");
 
   useEffect(() => {
     const presentations = JSON.parse(
@@ -42,6 +42,14 @@ export default function Presentation() {
       setSlides({ [newSlide.id]: newSlide });
     }
   }, []);
+
+  useEffect(() => {
+    setTextValue("");
+    setTextWidth("");
+    setTextHeight("");
+    setFontSize("");
+    setColor("");
+  }, [showTextModal]);
 
   const saveSlides = async (newSlides: Record<string, any>) => {
     const presentations = JSON.parse(
@@ -275,7 +283,7 @@ export default function Presentation() {
               className="input"
               placeholder="Width %"
               value={textWidth}
-              onChange={(e) => setTextWidth(Number(e.target.value))}
+              onChange={(e) => setTextWidth(e.target.value)}
             />
 
             <input
@@ -283,7 +291,7 @@ export default function Presentation() {
               className="input"
               placeholder="Height %"
               value={textHeight}
-              onChange={(e) => setTextHeight(Number(e.target.value))}
+              onChange={(e) => setTextHeight(e.target.value)}
             />
 
             <input
@@ -292,7 +300,7 @@ export default function Presentation() {
               className="input"
               placeholder="Font size (em)"
               value={fontSize}
-              onChange={(e) => setFontSize(Number(e.target.value))}
+              onChange={(e) => setFontSize(e.target.value)}
             />
 
             <input
