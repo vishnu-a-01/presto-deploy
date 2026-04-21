@@ -20,7 +20,9 @@ export default function Presentation() {
   const [slides, setSlides] = useState<Slides>({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [showTextModal, setShowTextModal] = useState(false);
+  const [showAddElementModal, setShowAddElementModal] = useState(false);
+  const [currentlyEditingElement, setEditingElement] =
+    useState<SlideElement | null>(null);
 
   useEffect(() => {
     const presentations = JSON.parse(
@@ -68,13 +70,10 @@ export default function Presentation() {
   const reindexSlides = (slides: Slides) => {
     return Object.values(slides)
       .sort((a, b) => a.position - b.position)
-      .reduce(
-        (acc, slide, idx) => {
-          acc[slide.id] = { ...slide, position: idx };
-          return acc;
-        },
-        {} as Slides,
-      );
+      .reduce((acc, slide, idx) => {
+        acc[slide.id] = { ...slide, position: idx };
+        return acc;
+      }, {} as Slides);
   };
 
   const addSlide = () => {
@@ -184,37 +183,47 @@ export default function Presentation() {
     }
   };
 
-  const addTextElement = (slideData: Partial<SlideElement>) => {
+  const addOrEditElement = (elementData: Partial<SlideElement>) => {
     const keys = orderedSlides.map((s) => s.id);
     const slideId = keys[currentIndex];
     const slide = slides[slideId];
 
-    const last = slide.elements[slide.elements.length - 1];
+    if (!slide) return;
 
-    const newEl = {
-      id: crypto.randomUUID(),
-      type: "text" as const,
-      x: 0,
-      y: last ? last.y + last.height + 1 : 0,
-      width: Number(slideData.width) || 20,
-      height: Number(slideData.height) || 10,
-      text: slideData.text || "",
-      fontSize: Number(slideData.fontSize) || 1,
-      color: slideData.color || "#ffffff",
-      layer: slide.elements.length,
+    const last = slide.elements[slide.elements.length - 1];
+    const isEditing = elementData.id ? true : false;
+
+    const elementToSave: SlideElement = {
+      id: currentlyEditingElement?.id || crypto.randomUUID(),
+      type: currentlyEditingElement?.type || "text",
+      x: Number(elementData.x) || 0,
+      y: Number(elementData.y) || (last ? last.y + last.height + 1 : 0),
+      width: Number(elementData.width) || 20,
+      height: Number(elementData.height) || 10,
+      text: elementData.text || "",
+      fontSize: Number(elementData.fontSize) || 1,
+      color: elementData.color || "#ffffff",
+      layer: currentlyEditingElement?.layer ?? slide.elements.length,
     };
+
+    const updatedElements = isEditing
+      ? slide.elements.map((el) =>
+          el.id === currentlyEditingElement!.id ? elementToSave : el,
+        )
+      : [...slide.elements, elementToSave];
 
     const newSlides = {
       ...slides,
       [slideId]: {
         ...slide,
-        elements: [...slide.elements, newEl],
+        elements: updatedElements,
       },
     };
 
     setSlides(newSlides);
     saveSlides(newSlides);
-    setShowTextModal(false);
+    setEditingElement(null);
+    setShowAddElementModal(false);
   };
 
   const deleteElement = (elId: string) => {
@@ -271,7 +280,7 @@ export default function Presentation() {
           <div className="flex flex-col gap-2">
             <button
               className="icon-btn bg-white text-black rounded font-bold shadow"
-              onClick={() => setShowTextModal(true)}
+              onClick={() => setShowAddElementModal(true)}
             >
               T
             </button>
@@ -298,6 +307,10 @@ export default function Presentation() {
                   onContextMenu={(e) => {
                     e.preventDefault();
                     deleteElement(el.id);
+                  }}
+                  onDoubleClick={() => {
+                    setEditingElement(el);
+                    setShowAddElementModal(true);
                   }}
                   style={{
                     position: "absolute",
@@ -351,11 +364,15 @@ export default function Presentation() {
         </div>
       </div>
 
-      {showTextModal && (
+      {showAddElementModal && (
         <AddElementModal
-          isOpen={showTextModal}
-          onClose={() => setShowTextModal(false)}
-          onSave={addTextElement}
+          isOpen={showAddElementModal}
+          onClose={() => {
+            setEditingElement(null);
+            setShowAddElementModal(false);
+          }}
+          onSave={addOrEditElement}
+          initialData={currentlyEditingElement}
         />
       )}
 
