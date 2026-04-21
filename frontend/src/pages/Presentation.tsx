@@ -2,22 +2,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { UpdateStore } from "../api/api";
 import ErrorPopup from "./Error";
-type Slide = {
-  id: string;
-  position: number;
-  elements: {
-    id: string;
-    type: "text";
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    text: string;
-    fontSize: number;
-    color: string;
-    layer: number;
-  }[];
-};
+import AddElementModal from "./components/AddElementModal";
+import type { SlideElement, Slides } from "../types/types";
+
 export default function Presentation() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,15 +17,10 @@ export default function Presentation() {
   const [showEditThumbnail, setShowEditThumbnail] = useState(false);
   const [error, setErrorMessage] = useState<string | null>(null);
 
-  const [slides, setSlides] = useState<Record<string, Slide>>({});
+  const [slides, setSlides] = useState<Slides>({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [showTextModal, setShowTextModal] = useState(false);
-  const [textValue, setTextValue] = useState("");
-  const [textWidth, setTextWidth] = useState("");
-  const [textHeight, setTextHeight] = useState("");
-  const [fontSize, setFontSize] = useState("");
-  const [color, setColor] = useState("");
 
   useEffect(() => {
     const presentations = JSON.parse(
@@ -60,19 +42,13 @@ export default function Presentation() {
     }
   }, []);
 
-  const orderedSlides = Object.values(slides).sort((a, b) => a.position - b.position);
+  const orderedSlides = Object.values(slides).sort(
+    (a, b) => a.position - b.position,
+  );
 
   const getCurrentSlide = () => orderedSlides[currentIndex];
 
-  useEffect(() => {
-    setTextValue("");
-    setTextWidth("");
-    setTextHeight("");
-    setFontSize("");
-    setColor("");
-  }, [showTextModal]);
-
-  const saveSlides = async (newSlides: Record<string, Slide>) => {
+  const saveSlides = async (newSlides: Slides) => {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
     );
@@ -89,13 +65,16 @@ export default function Presentation() {
     }
   };
 
-  const reindexSlides = (slides: Record<string, Slide>) => {
+  const reindexSlides = (slides: Slides) => {
     return Object.values(slides)
       .sort((a, b) => a.position - b.position)
-      .reduce((acc, slide, idx) => {
-        acc[slide.id] = { ...slide, position: idx };
-        return acc;
-      }, {} as Record<string, Slide>);
+      .reduce(
+        (acc, slide, idx) => {
+          acc[slide.id] = { ...slide, position: idx };
+          return acc;
+        },
+        {} as Slides,
+      );
   };
 
   const addSlide = () => {
@@ -115,7 +94,7 @@ export default function Presentation() {
   };
 
   const deleteSlide = () => {
-    const keys = orderedSlides.map(s => s.id);
+    const keys = orderedSlides.map((s) => s.id);
 
     if (keys.length === 1) {
       setErrorMessage("Delete presentation instead");
@@ -205,8 +184,8 @@ export default function Presentation() {
     }
   };
 
-  const addTextElement = () => {
-    const keys = orderedSlides.map(s => s.id);
+  const addTextElement = (slideData: Partial<SlideElement>) => {
+    const keys = orderedSlides.map((s) => s.id);
     const slideId = keys[currentIndex];
     const slide = slides[slideId];
 
@@ -217,11 +196,11 @@ export default function Presentation() {
       type: "text" as const,
       x: 0,
       y: last ? last.y + last.height + 1 : 0,
-      width: Number(textWidth),
-      height: Number(textHeight),
-      text: textValue,
-      fontSize: Number(fontSize),
-      color,
+      width: Number(slideData.width) || 20,
+      height: Number(slideData.height) || 10,
+      text: slideData.text || "",
+      fontSize: Number(slideData.fontSize) || 1,
+      color: slideData.color || "#ffffff",
       layer: slide.elements.length,
     };
 
@@ -239,7 +218,7 @@ export default function Presentation() {
   };
 
   const deleteElement = (elId: string) => {
-    const keys = orderedSlides.map(s => s.id);
+    const keys = orderedSlides.map((s) => s.id);
     const slideId = keys[currentIndex];
     const slide = slides[slideId];
 
@@ -373,59 +352,11 @@ export default function Presentation() {
       </div>
 
       {showTextModal && (
-        <div className="fixed inset-0 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => setShowTextModal(false)}
-          />
-
-          <div className="relative bg-[#111] p-6 rounded-lg w-[320px] flex flex-col gap-3">
-            <h2 className="font-semibold">Add Text</h2>
-
-            <input
-              className="input"
-              placeholder="Text"
-              value={textValue}
-              onChange={(e) => setTextValue(e.target.value)}
-            />
-
-            <input
-              type="number"
-              className="input"
-              placeholder="Width %"
-              value={textWidth}
-              onChange={(e) => setTextWidth(e.target.value)}
-            />
-
-            <input
-              type="number"
-              className="input"
-              placeholder="Height %"
-              value={textHeight}
-              onChange={(e) => setTextHeight(e.target.value)}
-            />
-
-            <input
-              type="number"
-              step="0.1"
-              className="input"
-              placeholder="Font size (em)"
-              value={fontSize}
-              onChange={(e) => setFontSize(e.target.value)}
-            />
-
-            <input
-              className="input"
-              placeholder="#HEX color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-            />
-
-            <button className="btn btn-primary" onClick={addTextElement}>
-              Add
-            </button>
-          </div>
-        </div>
+        <AddElementModal
+          isOpen={showTextModal}
+          onClose={() => setShowTextModal(false)}
+          onSave={addTextElement}
+        />
       )}
 
       {showDelete && (
