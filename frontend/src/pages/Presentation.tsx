@@ -264,7 +264,7 @@ export default function Presentation() {
             <h2 className="font-semibold">Add Text</h2>
 
             <input
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Text"
               value={textValue}
               onChange={(e) => setTextValue(e.target.value)}
@@ -272,7 +272,7 @@ export default function Presentation() {
 
             <input
               type="number"
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Width %"
               value={textWidth}
               onChange={(e) => setTextWidth(Number(e.target.value))}
@@ -280,7 +280,7 @@ export default function Presentation() {
 
             <input
               type="number"
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Height %"
               value={textHeight}
               onChange={(e) => setTextHeight(Number(e.target.value))}
@@ -289,14 +289,14 @@ export default function Presentation() {
             <input
               type="number"
               step="0.1"
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Font size (em)"
               value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
             />
 
             <input
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="#HEX color"
               value={color}
               onChange={(e) => setColor(e.target.value)}
@@ -344,7 +344,7 @@ export default function Presentation() {
             <h2 className="font-semibold">Edit Title</h2>
 
             <input
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -377,7 +377,7 @@ export default function Presentation() {
               className="w-full h-40 object-cover rounded"
             />
             <input
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Thumbnail URL"
               value={editedThumbnail}
               onChange={(e) => setEditedThumbnail(e.target.value)}

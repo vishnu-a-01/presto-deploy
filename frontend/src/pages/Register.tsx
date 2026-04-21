@@ -88,7 +88,7 @@ export default function Register() {
         <h1 className="text-2xl font-bold text-center">Register</h1>
 
         <input
-          className="px-3 py-2 rounded bg-white/10 outline-none"
+          className="input"
           placeholder="Name"
           type="text"
           {...register("name")}
@@ -98,7 +98,7 @@ export default function Register() {
         )}
 
         <input
-          className="px-3 py-2 rounded bg-white/10 outline-none"
+          className="input"
           placeholder="Email"
           type="text"
           {...register("email")}
@@ -108,7 +108,7 @@ export default function Register() {
         )}
 
         <input
-          className="px-3 py-2 rounded bg-white/10 outline-none"
+          className="input"
           placeholder="Password"
           type="password"
           {...register("password")}
@@ -118,7 +118,7 @@ export default function Register() {
         )}
 
         <input
-          className="px-3 py-2 rounded bg-white/10 outline-none"
+          className="input"
           placeholder="Confirm Password"
           type="password"
           {...register("confirmPassword")}

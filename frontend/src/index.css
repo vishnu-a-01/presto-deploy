@@ -43,6 +43,10 @@
   .icon-btn {
     @apply w-6 h-6 bg-white text-black rounded font-bold shadow flex items-center justify-center transition hover:bg-gray-200;
   }
+
+  .input {
+    @apply px-3 py-2 rounded bg-white/10;
+  }
 }
 @media (max-width: 640px) {
   .btn {

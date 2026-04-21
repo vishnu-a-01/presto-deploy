@@ -72,7 +72,7 @@ export default function Login() {
         <input
           type="email"
           placeholder="Email"
-          className="px-3 py-2 rounded bg-white/10 outline-none"
+          className="input"
           {...register("email")}
         />
         {errors.email && (
@@ -81,7 +81,7 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
-          className="px-3 py-2 rounded bg-white/10 outline-none"
+          className="input"
           {...register("password")}
         />
         {errors.password && (

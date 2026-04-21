@@ -84,21 +84,21 @@ export default function Dashboard() {
             <h2 className="text-lg font-bold">New Presentation</h2>
 
             <input
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
 
             <input
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
 
             <input
-              className="px-3 py-2 rounded bg-white/10"
+              className="input"
               placeholder="Thumbnail URL (optional)"
               value={thumbnail}
               onChange={(e) => setThumbnail(e.target.value)}
