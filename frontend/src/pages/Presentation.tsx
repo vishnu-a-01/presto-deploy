@@ -147,7 +147,7 @@ export default function Presentation() {
       });
       setThumbnail(newThumbnail);
       setShowEditThumbnail(false);
-    } catch (err) {
+    } catch {
       setErrorMessage("Failed to update thumbnail");
     }
   };
@@ -164,7 +164,7 @@ export default function Presentation() {
       });
       setTitle(newTitle);
       setShowEditTitle(false);
-    } catch (err) {
+    } catch {
       setErrorMessage("Failed to update title");
     }
   };
@@ -180,7 +180,7 @@ export default function Presentation() {
         presentations,
       });
       navigate("/dashboard");
-    } catch (err) {
+    } catch {
       setErrorMessage("Failed to delete presentation");
     }
   };

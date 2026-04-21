@@ -73,7 +73,7 @@ export default function Register() {
         auth.login({ name: data.name, email: data.email, token: res.token });
         navigate("/dashboard");
       }
-    } catch (err) {
+    } catch {
       setRegisterError("An unexpected error occurred. Please try again.");
     }
   };

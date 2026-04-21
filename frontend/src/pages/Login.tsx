@@ -57,7 +57,7 @@ export default function Login() {
         auth.login({ name: "", email: data.email, token: res.token });
         navigate("/dashboard");
       }
-    } catch (err) {
+    } catch {
       setLoginError("An unexpected error occurred. Please try again.");
     }
   };
