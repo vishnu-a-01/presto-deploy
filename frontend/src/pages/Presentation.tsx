@@ -216,7 +216,7 @@ export default function Presentation() {
       id: crypto.randomUUID(),
       type: "text" as const,
       x: 0,
-      y: last ? last.height + 1 : 0,
+      y: last ? last.y + last.height + 1 : 0,
       width: Number(textWidth),
       height: Number(textHeight),
       text: textValue,
