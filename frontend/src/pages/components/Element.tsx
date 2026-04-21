@@ -19,49 +19,49 @@ export default function SlElement({ el, onDelete, onEdit }: ElementProps) {
 
   const renderContent = () => {
     switch (el.type) {
-      case "text":
-        return (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              fontSize: `${el.fontSize}em`,
-              color: el.color,
-              overflow: "auto",
-            }}
-          >
-            {el.text}
-          </div>
-        );
+    case "text":
+      return (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            fontSize: `${el.fontSize}em`,
+            color: el.color,
+            overflow: "auto",
+          }}
+        >
+          {el.text}
+        </div>
+      );
 
-      case "image":
-        return (
-          <img
+    case "image":
+      return (
+        <img
+          src={el.url}
+          alt={el.altText || "Image"}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+          }}
+        />
+      );
+
+    case "video":
+      return (
+        <>
+          <div className="absolute top-1 right-1 w-4 h-4 bg-white cursor-pointer z-10" />
+          <iframe
             src={el.url}
-            alt={el.altText || "Image"}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-            }}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
           />
-        );
+        </>
+      );
 
-      case "video":
-        return (
-          <>
-            <div className="absolute top-1 right-1 w-4 h-4 bg-white cursor-pointer z-10" />
-            <iframe
-              src={el.url}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </>
-        );
-
-      default:
-        return null;
+    default:
+      return null;
     }
   };
 

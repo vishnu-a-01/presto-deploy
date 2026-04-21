@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("user")
     if (saved) setUser(JSON.parse(saved))
-        setLoading(false)
+    setLoading(false)
   }, [])
 
   const login = (user: User) => {

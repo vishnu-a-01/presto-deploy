@@ -11,20 +11,20 @@ export default function Landing() {
       </p>
 
       <div className="flex gap-4">
-      <button
-        className="btn btn-secondary"
-        onClick={() => navigate("/login")}
-      >
+        <button
+          className="btn btn-secondary"
+          onClick={() => navigate("/login")}
+        >
         Login
-      </button>
+        </button>
 
-      <button
-        className="btn btn-primary"
-        onClick={() => navigate("/register")}
-      >
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate("/register")}
+        >
         Register
-      </button>
-    </div>
+        </button>
+      </div>
     </div>
   )
 }

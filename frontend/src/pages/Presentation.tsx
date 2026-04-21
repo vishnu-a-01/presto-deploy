@@ -212,8 +212,8 @@ export default function Presentation() {
 
     const updatedElements = isEditing
       ? slide.elements.map((el) =>
-          el.id === currentlyEditingElement!.id ? elementToSave : el,
-        )
+        el.id === currentlyEditingElement!.id ? elementToSave : el,
+      )
       : [...slide.elements, elementToSave];
 
     const newSlides = {
@@ -328,7 +328,7 @@ export default function Presentation() {
                       setShowAddElementModal(el.type);
                     }}
                   />)
-                })
+              })
               }
 
               <div className="absolute bottom-2 left-3 text-xs text-gray-400">
