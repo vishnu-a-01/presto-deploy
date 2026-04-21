@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthLogin } from "../api/api";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../AuthProvider";
 import { useState } from "react";
 import ErrorPopup from "./Error";
 

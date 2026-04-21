@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { GetStore, UpdateStore } from "../api/api";
 import type { Presentation, Presentations, Slide } from "../types/types";

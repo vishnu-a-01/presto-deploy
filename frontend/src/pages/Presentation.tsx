@@ -41,24 +41,28 @@ export default function Presentation() {
   const [currentlyEditingElement, setEditingElement] =
     useState<SlideElement>(emptyElement);
 
+  
   useEffect(() => {
-    const presentations = JSON.parse(
-      localStorage.getItem("presentations") || "[]",
-    );
-    const presentation = presentations[id!];
+    const loadData = () => {
+      const presentations = JSON.parse(
+        localStorage.getItem("presentations") || "[]",
+      );
+      const presentation = presentations[id!];
 
-    setTitle(presentation.name);
-    setThumbnail(presentation.thumbnail || "");
-    setEditedThumbnail(presentation.thumbnail || "");
+      setTitle(presentation.name);
+      setThumbnail(presentation.thumbnail || "");
+      setEditedThumbnail(presentation.thumbnail || "");
 
-    if (presentation.slides && Object.keys(presentation.slides).length > 0) {
-      setSlides(presentation.slides);
-    } else {
-      const newSlideId = crypto.randomUUID();
-      setSlides({
-        [newSlideId]: { id: newSlideId, position: 0, elements: [] },
-      });
-    }
+      if (presentation.slides && Object.keys(presentation.slides).length > 0) {
+        setSlides(presentation.slides);
+      } else {
+        const newSlideId = crypto.randomUUID();
+        setSlides({
+          [newSlideId]: { id: newSlideId, position: 0, elements: [] },
+        });
+      }
+    };
+    loadData();
   }, []);
 
   const orderedSlides = Object.values(slides).sort(

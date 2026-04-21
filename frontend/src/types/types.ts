@@ -34,3 +34,17 @@ export type Presentation = {
 };
 
 export type Presentations = { [key: string]: Presentation };
+
+export type User = {
+  name: string
+  email: string
+  token: string
+}
+
+export type AuthContextType = {
+  user: User | null
+  login: (_: User) => void
+  logout: () => void
+  isAuthenticated: boolean
+  loading: boolean
+}
