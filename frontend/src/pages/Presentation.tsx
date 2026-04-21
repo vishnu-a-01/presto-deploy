@@ -2,7 +2,21 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { UpdateStore } from "../api/api";
 import ErrorPopup from "./Error";
-
+type Slide = {
+  id: string;
+  elements: {
+    id: string;
+    type: "text";
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    text: string;
+    fontSize: number;
+    color: string;
+    layer: number;
+  }[];
+};
 export default function Presentation() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -15,7 +29,7 @@ export default function Presentation() {
   const [showEditThumbnail, setShowEditThumbnail] = useState(false);
   const [error, setErrorMessage] = useState<string | null>(null);
 
-  const [slides, setSlides] = useState<Record<string, { id: string }>>({});
+  const [slides, setSlides] = useState<Record<string, Slide>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [showTextModal, setShowTextModal] = useState(false);
@@ -38,10 +52,15 @@ export default function Presentation() {
     if (presentation.slides && Object.keys(presentation.slides).length > 0) {
       setSlides(presentation.slides);
     } else {
-      const newSlide = { id: crypto.randomUUID() };
-      setSlides({ [newSlide.id]: newSlide });
+      const newSlideId = crypto.randomUUID();
+      setSlides({
+        [newSlideId]: { id: newSlideId, elements: [] },
+      });
     }
   }, []);
+
+  const getSlideKeys = () => Object.keys(slides);
+  const getCurrentSlide = () => slides[getSlideKeys()[currentIndex]];
 
   useEffect(() => {
     setTextValue("");
@@ -51,7 +70,7 @@ export default function Presentation() {
     setColor("");
   }, [showTextModal]);
 
-  const saveSlides = async (newSlides: Record<string, any>) => {
+  const saveSlides = async (newSlides: Record<string, Slide>) => {
     const presentations = JSON.parse(
       localStorage.getItem("presentations") || "[]",
     );
@@ -69,8 +88,11 @@ export default function Presentation() {
   };
 
   const addSlide = () => {
-    const newSlide = { id: crypto.randomUUID() };
-    const newSlides = { ...slides, [newSlide.id]: newSlide };
+    const newId = crypto.randomUUID();
+    const newSlides = {
+      ...slides,
+      [newId]: { id: newId, elements: [] },
+    };
     setSlides(newSlides);
     setCurrentIndex(Object.keys(newSlides).length - 1);
     saveSlides(newSlides);
@@ -165,6 +187,56 @@ export default function Presentation() {
     }
   };
 
+  const addTextElement = () => {
+    const keys = getSlideKeys();
+    const slideId = keys[currentIndex];
+    const slide = slides[slideId];
+
+    const last = slide.elements[slide.elements.length - 1];
+
+    const newEl = {
+      id: crypto.randomUUID(),
+      type: "text" as const,
+      x: 0,
+      y: last ? last.height + 1 : 0,
+      width: Number(textWidth),
+      height: Number(textHeight),
+      text: textValue,
+      fontSize: Number(fontSize),
+      color,
+      layer: slide.elements.length,
+    };
+
+    const newSlides = {
+      ...slides,
+      [slideId]: {
+        ...slide,
+        elements: [...slide.elements, newEl],
+      },
+    };
+
+    setSlides(newSlides);
+    saveSlides(newSlides);
+    setShowTextModal(false);
+  };
+
+  const deleteElement = (elId: string) => {
+    const keys = getSlideKeys();
+    const slideId = keys[currentIndex];
+    const slide = slides[slideId];
+
+    const newSlides = {
+      ...slides,
+      [slideId]: {
+        ...slide,
+        elements: slide.elements.filter((e) => e.id !== elId),
+      },
+    };
+
+    setSlides(newSlides);
+    saveSlides(newSlides);
+  };
+
   return (
     <div className="h-screen bg-black text-white flex flex-col">
       <div className="flex justify-between items-center p-4 border-b border-white/10">
@@ -223,7 +295,28 @@ export default function Presentation() {
             </div>
 
             <div className="relative w-[70vw] max-w-[1400px] aspect-[2/1] bg-white/10 rounded-lg flex items-center justify-center">
-              <p className="text-gray-400">Slide Content</p>
+              {getCurrentSlide()?.elements?.map((el) => (
+                <div
+                  key={el.id}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    deleteElement(el.id);
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: `${el.y}%`,
+                    left: `${el.x}%`,
+                    width: `${el.width}%`,
+                    height: `${el.height}%`,
+                    fontSize: `${el.fontSize}em`,
+                    color: el.color,
+                    border: "1px solid #888",
+                    overflow: "auto",
+                  }}
+                >
+                  {el.text}
+                </div>
+              ))}
 
               <div className="absolute bottom-2 left-3 text-xs text-gray-400">
                 {currentIndex + 1}
@@ -310,7 +403,9 @@ export default function Presentation() {
               onChange={(e) => setColor(e.target.value)}
             />
 
-            <button className="btn btn-primary">Add</button>
+            <button className="btn btn-primary" onClick={addTextElement}>
+              Add
+            </button>
           </div>
         </div>
       )}
