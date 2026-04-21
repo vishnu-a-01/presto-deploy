@@ -16,88 +16,88 @@ export default function Presentation() {
   const [error, setErrorMessage] = useState<string | null>(null);
 
   const [slides, setSlides] = useState<Record<string, { id: string }>>({});
-const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-useEffect(() => {
-  const presentations = JSON.parse(
-    localStorage.getItem("presentations") || "[]",
-  );
-  const presentation = presentations[id!];
+  useEffect(() => {
+    const presentations = JSON.parse(
+      localStorage.getItem("presentations") || "[]",
+    );
+    const presentation = presentations[id!];
 
-  setTitle(presentation.name);
-  setThumbnail(presentation.thumbnail || "");
-  setEditedThumbnail(presentation.thumbnail || "");
+    setTitle(presentation.name);
+    setThumbnail(presentation.thumbnail || "");
+    setEditedThumbnail(presentation.thumbnail || "");
 
-  if (presentation.slides && Object.keys(presentation.slides).length > 0) {
-    setSlides(presentation.slides);
-  } else {
-    const newSlide = { id: crypto.randomUUID() };
-    setSlides({ [newSlide.id]: newSlide });
-  }
-}, []);
+    if (presentation.slides && Object.keys(presentation.slides).length > 0) {
+      setSlides(presentation.slides);
+    } else {
+      const newSlide = { id: crypto.randomUUID() };
+      setSlides({ [newSlide.id]: newSlide });
+    }
+  }, []);
 
-const saveSlides = async (newSlides: Record<string, any>) => {
-  const presentations = JSON.parse(
-    localStorage.getItem("presentations") || "[]",
-  );
+  const saveSlides = async (newSlides: Record<string, any>) => {
+    const presentations = JSON.parse(
+      localStorage.getItem("presentations") || "[]",
+    );
 
-  presentations[id!].slides = newSlides;
-  localStorage.setItem("presentations", JSON.stringify(presentations));
+    presentations[id!].slides = newSlides;
+    localStorage.setItem("presentations", JSON.stringify(presentations));
 
-  try {
-    await UpdateStore(JSON.parse(localStorage.getItem("user")!).token, {
-      presentations,
-    });
-  } catch {
-    setErrorMessage("Failed to update slides");
-  }
-};
-
-const addSlide = () => {
-  const newSlide = { id: crypto.randomUUID() };
-  const newSlides = { ...slides, [newSlide.id]: newSlide };
-  setSlides(newSlides);
-  setCurrentIndex(Object.keys(newSlides).length - 1);
-  saveSlides(newSlides);
-};
-
-const deleteSlide = () => {
-  const keys = Object.keys(slides);
-
-  if (keys.length === 1) {
-    setErrorMessage("Delete presentation instead");
-    return;
-  }
-
-  const newSlides = { ...slides };
-  delete newSlides[keys[currentIndex]];
-
-  setSlides(newSlides);
-  setCurrentIndex(Math.max(0, currentIndex - 1));
-  saveSlides(newSlides);
-};
-
-const goNext = () => {
-  if (currentIndex < Object.keys(slides).length - 1) {
-    setCurrentIndex((i) => i + 1);
-  }
-};
-
-const goPrev = () => {
-  if (currentIndex > 0) {
-    setCurrentIndex((i) => i - 1);
-  }
-};
-
-useEffect(() => {
-  const handleKey = (e: KeyboardEvent) => {
-    if (e.key === "ArrowRight") goNext();
-    if (e.key === "ArrowLeft") goPrev();
+    try {
+      await UpdateStore(JSON.parse(localStorage.getItem("user")!).token, {
+        presentations,
+      });
+    } catch {
+      setErrorMessage("Failed to update slides");
+    }
   };
 
-  window.addEventListener("keydown", handleKey);
-  return () => window.removeEventListener("keydown", handleKey);
-}, [currentIndex, slides]);
+  const addSlide = () => {
+    const newSlide = { id: crypto.randomUUID() };
+    const newSlides = { ...slides, [newSlide.id]: newSlide };
+    setSlides(newSlides);
+    setCurrentIndex(Object.keys(newSlides).length - 1);
+    saveSlides(newSlides);
+  };
+
+  const deleteSlide = () => {
+    const keys = Object.keys(slides);
+
+    if (keys.length === 1) {
+      setErrorMessage("Delete presentation instead");
+      return;
+    }
+
+    const newSlides = { ...slides };
+    delete newSlides[keys[currentIndex]];
+
+    setSlides(newSlides);
+    setCurrentIndex(Math.max(0, currentIndex - 1));
+    saveSlides(newSlides);
+  };
+
+  const goNext = () => {
+    if (currentIndex < Object.keys(slides).length - 1) {
+      setCurrentIndex((i) => i + 1);
+    }
+  };
+
+  const goPrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((i) => i - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowLeft") goPrev();
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [currentIndex, slides]);
 
   const updateThumbnail = async (newThumbnail: string) => {
     const presentations = JSON.parse(
@@ -289,7 +289,10 @@ useEffect(() => {
         <div className="fixed inset-0 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-black/60"
-            onClick={() => {setEditedThumbnail(thumbnail);setShowEditThumbnail(false)}}
+            onClick={() => {
+              setEditedThumbnail(thumbnail);
+              setShowEditThumbnail(false);
+            }}
           />
 
           <div className="relative bg-[#111] p-6 rounded-lg w-[300px] flex flex-col gap-3">
@@ -306,7 +309,10 @@ useEffect(() => {
               onChange={(e) => setEditedThumbnail(e.target.value)}
             />
 
-            <button className="btn btn-primary" onClick={() => updateThumbnail(editedThumbnail)}>
+            <button
+              className="btn btn-primary"
+              onClick={() => updateThumbnail(editedThumbnail)}
+            >
               Save
             </button>
           </div>
