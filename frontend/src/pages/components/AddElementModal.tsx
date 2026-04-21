@@ -6,7 +6,7 @@ interface ElementModalProps {
   onClose: () => void;
   onSave: (data: Partial<SlideElement>) => void;
   initialData?: SlideElement | null;
-  defaultType?: ElementType;
+  elementType?: ElementType;
 }
 
 export default function AddElementModal({
@@ -14,7 +14,7 @@ export default function AddElementModal({
   onClose,
   onSave,
   initialData,
-  defaultType,
+  elementType,
 }: ElementModalProps) {
   const [formData, setFormData] = useState<Partial<SlideElement>>({
     type: "text",
@@ -25,7 +25,8 @@ export default function AddElementModal({
     text: "",
     fontSize: 1,
     color: "#ffffff",
-    src: "",
+    url: "",
+    altText: "",
   });
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function AddElementModal({
       setFormData(initialData);
     } else {
       setFormData({
-        type: defaultType || "text",
+        type: elementType || "text",
         x: 0,
         y: 0,
         width: 20,
@@ -41,10 +42,11 @@ export default function AddElementModal({
         text: "",
         fontSize: 1,
         color: "#ffffff",
-        src: "",
+        url: "",
+        altText: "",
       });
     }
-  }, [initialData, isOpen, defaultType]);
+  }, [initialData, isOpen, elementType]);
 
   if (!isOpen) return null;
 
@@ -53,7 +55,13 @@ export default function AddElementModal({
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
 
       <div className="relative bg-[#111] p-6 rounded-lg w-[320px] flex flex-col gap-3">
-        <h2 className="font-semibold">Add Text</h2>
+        <h2 className="font-semibold">
+          {formData.type === "image"
+            ? "Add Image"
+            : formData.type === "video"
+              ? "Add Video"
+              : "Add Text"}
+        </h2>
 
         {initialData && (
           <div className="flex gap-2">
@@ -62,7 +70,6 @@ export default function AddElementModal({
               <input
                 type="number"
                 className="input"
-                placeholder="x pos"
                 value={formData.x}
                 onChange={(e) =>
                   setFormData({ ...formData, x: Number(e.target.value) })
@@ -74,7 +81,6 @@ export default function AddElementModal({
               <input
                 type="number"
                 className="input"
-                placeholder="y pos"
                 value={formData.y}
                 onChange={(e) =>
                   setFormData({ ...formData, y: Number(e.target.value) })
@@ -84,69 +90,103 @@ export default function AddElementModal({
           </div>
         )}
 
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-400 font-medium">Text</label>
-          <input
-            className="input"
-            placeholder="Text"
-            value={formData.text}
-            onChange={(e) => setFormData({ ...formData, text: e.target.value })}
-          />
-        </div>
+        {formData.type === "text" && (
+          <>
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 font-medium">Text</label>
+              <input
+                className="input"
+                value={formData.text}
+                onChange={(e) =>
+                  setFormData({ ...formData, text: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 font-medium">
+                Font Size (em)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                className="input"
+                value={formData.fontSize}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    fontSize: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 font-medium">Color</label>
+              <input
+                className="input"
+                value={formData.color}
+                onChange={(e) =>
+                  setFormData({ ...formData, color: e.target.value })
+                }
+              />
+            </div>
+          </>
+        )}
+
+        {(formData.type === "image" || formData.type === "video") && (
+          <>
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 font-medium">URL</label>
+              <input
+                className="input"
+                placeholder="https://..."
+                value={formData.url}
+                onChange={(e) =>
+                  setFormData({ ...formData, url: e.target.value })
+                }
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 font-medium">ALT text</label>
+              <input
+                className="input"
+                placeholder="Enter alt text"
+                value={formData.altText}
+                onChange={(e) =>
+                  setFormData({ ...formData, altText: e.target.value })
+                }
+              />
+            </div>
+          </>
+        )}
 
         <div className="flex flex-col">
           <label className="text-xs text-gray-400 font-medium">Width %</label>
           <input
             type="number"
             className="input"
-            placeholder="Width %"
             value={formData.width}
             onChange={(e) =>
               setFormData({ ...formData, width: Number(e.target.value) })
             }
           />
         </div>
+
         <div className="flex flex-col">
           <label className="text-xs text-gray-400 font-medium">Height %</label>
           <input
             type="number"
             className="input"
-            placeholder="Height %"
             value={formData.height}
             onChange={(e) =>
               setFormData({ ...formData, height: Number(e.target.value) })
             }
           />
         </div>
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-400 font-medium">
-            Font Size (em)
-          </label>
-          <input
-            type="number"
-            step="0.1"
-            className="input"
-            placeholder="Font size (em)"
-            value={formData.fontSize}
-            onChange={(e) =>
-              setFormData({ ...formData, fontSize: Number(e.target.value) })
-            }
-          />
-        </div>
 
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-400 font-medium">Color</label>
-          <input
-            className="input"
-            placeholder="#HEX color"
-            value={formData.color}
-            onChange={(e) =>
-              setFormData({ ...formData, color: e.target.value })
-            }
-          />
-        </div>
         <button className="btn btn-primary" onClick={() => onSave(formData)}>
-            Save
+          Save
         </button>
       </div>
     </div>

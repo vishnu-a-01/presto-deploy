@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { UpdateStore } from "../api/api";
 import ErrorPopup from "./Error";
 import AddElementModal from "./components/AddElementModal";
-import type { SlideElement, Slides } from "../types/types";
+import type { SlideElement, Slides, ElementType } from "../types/types";
+import SlElement from "./components/Element";
 
 export default function Presentation() {
   const { id } = useParams();
@@ -20,7 +21,8 @@ export default function Presentation() {
   const [slides, setSlides] = useState<Slides>({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [showAddElementModal, setShowAddElementModal] = useState(false);
+  const [showAddElementModal, setShowAddElementModal] =
+    useState<ElementType>("");
   const [currentlyEditingElement, setEditingElement] =
     useState<SlideElement | null>(null);
 
@@ -195,7 +197,7 @@ export default function Presentation() {
 
     const elementToSave: SlideElement = {
       id: currentlyEditingElement?.id || crypto.randomUUID(),
-      type: currentlyEditingElement?.type || "text",
+      type: elementData.type || "text",
       x: Number(elementData.x) || 0,
       y: Number(elementData.y) || (last ? last.y + last.height + 1 : 0),
       width: Number(elementData.width) || 20,
@@ -204,6 +206,8 @@ export default function Presentation() {
       fontSize: Number(elementData.fontSize) || 1,
       color: elementData.color || "#ffffff",
       layer: currentlyEditingElement?.layer ?? slide.elements.length,
+      url: elementData.url || "",
+      altText: elementData.altText || "",
     };
 
     const updatedElements = isEditing
@@ -223,7 +227,7 @@ export default function Presentation() {
     setSlides(newSlides);
     saveSlides(newSlides);
     setEditingElement(null);
-    setShowAddElementModal(false);
+    setShowAddElementModal("");
   };
 
   const deleteElement = (elId: string) => {
@@ -280,9 +284,21 @@ export default function Presentation() {
           <div className="flex flex-col gap-2">
             <button
               className="icon-btn bg-white text-black rounded font-bold shadow"
-              onClick={() => setShowAddElementModal(true)}
+              onClick={() => setShowAddElementModal("text")}
             >
               T
+            </button>
+            <button
+              className="icon-btn bg-white text-black rounded font-bold shadow"
+              onClick={() => setShowAddElementModal("image")}
+            >
+              I
+            </button>
+            <button
+              className="icon-btn bg-white text-black rounded font-bold shadow"
+              onClick={() => setShowAddElementModal("video")}
+            >
+              V
             </button>
           </div>
 
@@ -301,32 +317,19 @@ export default function Presentation() {
             </div>
 
             <div className="relative w-[70vw] max-w-[1400px] aspect-[2/1] bg-white/10 rounded-lg flex items-center justify-center">
-              {getCurrentSlide()?.elements?.map((el) => (
-                <div
-                  key={el.id}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    deleteElement(el.id);
-                  }}
-                  onDoubleClick={() => {
-                    setEditingElement(el);
-                    setShowAddElementModal(true);
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: `${el.y}%`,
-                    left: `${el.x}%`,
-                    width: `${el.width}%`,
-                    height: `${el.height}%`,
-                    fontSize: `${el.fontSize}em`,
-                    color: el.color,
-                    border: "1px solid #888",
-                    overflow: "auto",
-                  }}
-                >
-                  {el.text}
-                </div>
-              ))}
+              {getCurrentSlide()?.elements?.map((el) => {
+                return (
+                  <SlElement
+                    key={el.id}
+                    el={el}
+                    onDelete={deleteElement}
+                    onEdit={(el) => {
+                      setEditingElement(el);
+                      setShowAddElementModal(el.type);
+                    }}
+                  />)
+                })
+              }
 
               <div className="absolute bottom-2 left-3 text-xs text-gray-400">
                 {currentIndex + 1}
@@ -366,13 +369,14 @@ export default function Presentation() {
 
       {showAddElementModal && (
         <AddElementModal
-          isOpen={showAddElementModal}
+          isOpen={showAddElementModal ? true : false}
           onClose={() => {
             setEditingElement(null);
-            setShowAddElementModal(false);
+            setShowAddElementModal("");
           }}
           onSave={addOrEditElement}
           initialData={currentlyEditingElement}
+          elementType={showAddElementModal}
         />
       )}
 
