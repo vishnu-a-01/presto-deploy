@@ -1,7 +1,9 @@
-import {BACKEND_PORT} from "../../backend.config.json";
 import type { Presentations } from "../types/types";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function AuthLogin(loginData: { email: string; password: string }) {
-  const res = await fetch(`http://localhost:${BACKEND_PORT}/admin/auth/login`, {
+  const res = await fetch(`${API_URL}/admin/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -12,7 +14,7 @@ export async function AuthLogin(loginData: { email: string; password: string }) 
 }
 
 export async function AuthRegister(registerData: { name: string; email: string; password: string }) {
-  const res = await fetch(`http://localhost:${BACKEND_PORT}/admin/auth/register`, {
+  const res = await fetch(`${API_URL}/admin/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -23,7 +25,7 @@ export async function AuthRegister(registerData: { name: string; email: string; 
 }
 
 export async function GetStore(token: string) {
-  const res = await fetch(`http://localhost:${BACKEND_PORT}/store`, {
+  const res = await fetch(`${API_URL}/store`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -34,13 +36,13 @@ export async function GetStore(token: string) {
 }
 
 export async function UpdateStore(token: string, storeData: { presentations: Presentations }) {
-  const res = await fetch(`http://localhost:${BACKEND_PORT}/store`, {
+  const res = await fetch(`${API_URL}/store`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`
     },
-    body: JSON.stringify({store: storeData})
+    body: JSON.stringify({ store: storeData })
   });
   return res.json();
 }
