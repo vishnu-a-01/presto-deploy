@@ -42,7 +42,6 @@ export default function Presentation() {
   const [currentlyEditingElement, setEditingElement] =
     useState<SlideElement>(emptyElement);
 
-  
   useEffect(() => {
     const loadData = () => {
       const presentations = JSON.parse(
@@ -219,7 +218,11 @@ export default function Presentation() {
       id: currentlyEditingElement?.id || crypto.randomUUID(),
       type: elementData.type || "text",
       x: Number(elementData.x),
-      y: currentlyEditingElement?.id ? Number(elementData.y) : (last ? last.y + last.height + 1 : 0),
+      y: currentlyEditingElement?.id
+        ? Number(elementData.y)
+        : last
+          ? last.y + last.height + 1
+          : 0,
       width: Number(elementData.width),
       height: Number(elementData.height),
       text: elementData.text,
@@ -303,24 +306,36 @@ export default function Presentation() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex items-center gap-6">
           <div className="flex flex-col gap-2">
-            <button
-              className="icon-btn bg-white text-black rounded font-bold shadow"
-              onClick={() => setShowAddElementModal("text")}
-            >
-              T
-            </button>
-            <button
-              className="icon-btn bg-white text-black rounded font-bold shadow"
-              onClick={() => setShowAddElementModal("image")}
-            >
-              I
-            </button>
-            <button
-              className="icon-btn bg-white text-black rounded font-bold shadow"
-              onClick={() => setShowAddElementModal("video")}
-            >
-              V
-            </button>
+            <div className="relative group">
+              <button
+                className="icon-btn bg-white text-black rounded font-bold shadow"
+                onClick={() => setShowAddElementModal("text")}
+                aria-label="Add text"
+              >
+                T
+              </button>
+              <span className="tooltip">Add text</span>
+            </div>
+            <div className="relative group">
+              <button
+                className="icon-btn bg-white text-black rounded font-bold shadow"
+                onClick={() => setShowAddElementModal("image")}
+                aria-label="Add image"
+              >
+                I
+              </button>
+              <span className="tooltip">Add image</span>
+            </div>
+            <div className="relative group">
+              <button
+                className="icon-btn bg-white text-black rounded font-bold shadow"
+                onClick={() => setShowAddElementModal("video")}
+                aria-label="Add video"
+              >
+                V
+              </button>
+              <span className="tooltip">Add video</span>
+            </div>
           </div>
 
           <div className="flex flex-col items-center justify-center gap-4">
@@ -348,9 +363,9 @@ export default function Presentation() {
                       setEditingElement(el);
                       setShowAddElementModal(el.type);
                     }}
-                  />)
-              })
-              }
+                  />
+                );
+              })}
 
               <div className="absolute bottom-2 left-3 text-xs text-gray-400">
                 {currentIndex + 1}
