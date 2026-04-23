@@ -173,7 +173,7 @@ export default function AddElementModal({
           />
         </div>
 
-        <button className="btn btn-primary" onClick={() => onSave(initialData)}>
+        <button className="btn btn-primary" onClick={() => onSave({...initialData, type: elementType})}>
           Save
         </button>
       </div>
