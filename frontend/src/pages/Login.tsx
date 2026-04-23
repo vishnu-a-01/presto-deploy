@@ -87,7 +87,7 @@ export default function Login() {
         {errors.password && (
           <p className="text-red-400 text-sm">{errors.password.message}</p>
         )}
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary" aria-label="Login">
           Login
         </button>
         <p className="text-sm text-center text-gray-400">

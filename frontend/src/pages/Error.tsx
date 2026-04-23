@@ -26,6 +26,7 @@ export default function ErrorPopup({ message, onClose }: ErrorPopupProps) {
         <button
           onClick={onClose}
           className="mt-3 w-full bg-white text-red-500 py-1 rounded hover:bg-gray-100 transition"
+          aria-label="Close error"
         >
           Close
         </button>

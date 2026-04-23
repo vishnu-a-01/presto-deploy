@@ -307,6 +307,7 @@ export default function Presentation() {
         <button
           className="btn btn-secondary"
           onClick={() => navigate("/dashboard")}
+          aria-label="Back to dashboard"
         >
           Back
         </button>
@@ -314,12 +315,18 @@ export default function Presentation() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-semibold">{title}</h1>
-            <button onClick={() => setShowEditTitle(true)}>✏️</button>
+            <button
+              onClick={() => setShowEditTitle(true)}
+              aria-label="Edit presentation title"
+            >
+              ✏️
+            </button>
           </div>
 
           <button
             className="btn btn-secondary"
             onClick={() => setShowEditThumbnail(true)}
+            aria-label="Edit thumbnail"
           >
             Edit thumbnail
           </button>
@@ -328,6 +335,7 @@ export default function Presentation() {
         <button
           className="btn bg-red-500 hover:bg-red-600"
           onClick={() => setShowDelete(true)}
+          aria-label="Delete presentation"
         >
           Delete
         </button>
@@ -370,13 +378,18 @@ export default function Presentation() {
 
           <div className="flex flex-col items-center justify-center gap-4">
             <div className="flex gap-4">
-              <button className="btn btn-primary" onClick={addSlide}>
+              <button
+                className="btn btn-primary"
+                onClick={addSlide}
+                aria-label="Add new slide"
+              >
                 + New Slide
               </button>
 
               <button
                 className="btn bg-red-500 hover:bg-red-600"
                 onClick={deleteSlide}
+                aria-label="Delete current slide"
               >
                 Delete Slide
               </button>
@@ -407,6 +420,7 @@ export default function Presentation() {
                 <button
                   onClick={goPrev}
                   disabled={currentIndex === 0}
+                  aria-label="Previous slide"
                   className={`px-4 py-2 rounded ${
                     currentIndex === 0
                       ? "bg-gray-600 cursor-not-allowed"
@@ -419,6 +433,7 @@ export default function Presentation() {
                 <button
                   onClick={goNext}
                   disabled={currentIndex === orderedSlides.length - 1}
+                  aria-label="Next slide"
                   className={`px-4 py-2 rounded ${
                     currentIndex === orderedSlides.length - 1
                       ? "bg-gray-600 cursor-not-allowed"
@@ -458,13 +473,18 @@ export default function Presentation() {
             <p className="mb-4">Are you sure?</p>
 
             <div className="flex gap-2 justify-center">
-              <button className="btn bg-red-500" onClick={deletePresentation}>
+              <button
+                className="btn bg-red-500"
+                onClick={deletePresentation}
+                aria-label="Confirm delete presentation"
+              >
                 Yes
               </button>
 
               <button
                 className="btn btn-secondary"
                 onClick={() => setShowDelete(false)}
+                aria-label="Cancel delete presentation"
               >
                 No
               </button>
@@ -492,6 +512,7 @@ export default function Presentation() {
             <button
               className="btn btn-primary"
               onClick={() => updateTitle(title)}
+              aria-label="Save title"
             >
               Save
             </button>
@@ -526,6 +547,7 @@ export default function Presentation() {
             <button
               className="btn btn-primary"
               onClick={() => updateThumbnail(editedThumbnail)}
+              aria-label="Save thumbnail"
             >
               Save
             </button>

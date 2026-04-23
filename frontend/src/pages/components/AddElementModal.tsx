@@ -173,7 +173,11 @@ export default function AddElementModal({
           />
         </div>
 
-        <button className="btn btn-primary" onClick={() => onSave({...initialData, type: elementType})}>
+        <button
+          className="btn btn-primary"
+          onClick={() => onSave({ ...initialData, type: elementType })}
+          aria-label="Save element"
+        >
           Save
         </button>
       </div>

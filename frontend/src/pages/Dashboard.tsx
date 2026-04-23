@@ -64,11 +64,19 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold">Dashboard</h1>
 
         <div className="flex gap-8">
-          <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsOpen(true)}
+            aria-label="Open new presentation modal"
+          >
             New Presentation
           </button>
 
-          <button className="btn btn-logout" onClick={auth.logout}>
+          <button
+            className="btn btn-logout"
+            onClick={auth.logout}
+            aria-label="Logout"
+          >
             Logout
           </button>
         </div>
@@ -105,7 +113,11 @@ export default function Dashboard() {
               onChange={(e) => setThumbnail(e.target.value)}
             />
 
-            <button className="btn btn-primary" onClick={createPresentation}>
+            <button
+              className="btn btn-primary"
+              onClick={createPresentation}
+              aria-label="Create presentation"
+            >
               Create
             </button>
           </div>

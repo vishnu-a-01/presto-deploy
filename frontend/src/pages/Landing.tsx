@@ -14,6 +14,7 @@ export default function Landing() {
         <button
           className="btn btn-secondary"
           onClick={() => navigate("/login")}
+          aria-label="Go to login"
         >
         Login
         </button>
@@ -21,6 +22,7 @@ export default function Landing() {
         <button
           className="btn btn-primary"
           onClick={() => navigate("/register")}
+          aria-label="Go to register"
         >
         Register
         </button>

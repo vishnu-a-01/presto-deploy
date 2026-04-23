@@ -132,7 +132,11 @@ export default function Register() {
           <p className="text-red-400 text-sm">{errors.password.message}</p>
         )}
 
-        <button type="submit" className="btn btn-primary">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          aria-label="Create account"
+        >
           Create Account
         </button>
 
