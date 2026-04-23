@@ -55,6 +55,7 @@ export default function SlElement({ el, onDelete, onEdit }: ElementProps) {
           <div className="absolute top-1 right-1 w-4 h-4 bg-white cursor-pointer z-10" />
           <iframe
             src={el.url}
+            title={el.altText || "Embedded video"}
             className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen

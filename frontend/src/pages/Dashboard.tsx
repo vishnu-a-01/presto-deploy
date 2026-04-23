@@ -134,6 +134,7 @@ export default function Dashboard() {
             {p.thumbnail && (
               <img
                 src={p.thumbnail}
+                alt={`${p.name} thumbnail`}
                 className="absolute inset-0 w-full h-full object-cover"
               />
             )}
