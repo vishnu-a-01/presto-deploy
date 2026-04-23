@@ -27,6 +27,7 @@ export default function SlElement({ el, onDelete, onEdit }: ElementProps) {
             width: "100%",
             height: "100%",
             fontSize: `${el.fontSize}em`,
+            fontFamily: el.fontFamily,
             color: el.color,
             overflow: "auto",
           }}

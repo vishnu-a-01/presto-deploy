@@ -17,7 +17,6 @@ export default function AddElementModal({
   initialData,
   elementType,
 }: ElementModalProps) {
-
   if (!isOpen) return null;
 
   return (
@@ -75,6 +74,23 @@ export default function AddElementModal({
 
             <div className="flex flex-col">
               <label className="text-xs text-gray-400 font-medium">
+                Font Family
+              </label>
+              <select
+                className="input"
+                value={initialData.fontFamily}
+                onChange={(e) =>
+                  onChange({ ...initialData, fontFamily: e.target.value })
+                }
+              >
+                <option className="input" value="Arial">Arial</option>
+                <option className="input" value="Roboto">Roboto</option>
+                <option className="input" value="Times New Roman">Times New Roman</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-400 font-medium">
                 Font Size (em)
               </label>
               <input
@@ -118,7 +134,9 @@ export default function AddElementModal({
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-xs text-gray-400 font-medium">ALT text</label>
+              <label className="text-xs text-gray-400 font-medium">
+                ALT text
+              </label>
               <input
                 className="input"
                 placeholder="Enter alt text"

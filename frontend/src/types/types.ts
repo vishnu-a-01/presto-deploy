@@ -9,6 +9,7 @@ export type SlideElement = {
   height: number;
   text?: string;
   fontSize?: number;
+  fontFamily?: string;
   color?: string;
   layer: number;
   url?: string;
