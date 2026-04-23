@@ -77,15 +77,15 @@ export default function AddElementModal({
                 Font Family
               </label>
               <select
-                className="input"
+                className="input text-black [color-scheme:dark]"
                 value={initialData.fontFamily}
                 onChange={(e) =>
                   onChange({ ...initialData, fontFamily: e.target.value })
                 }
               >
-                <option className="input" value="Arial">Arial</option>
-                <option className="input" value="Roboto">Roboto</option>
-                <option className="input" value="Times New Roman">Times New Roman</option>
+                <option value="sans-serif">Sans-Serif</option>
+                <option value="monospace">Monospace</option>
+                <option value="cursive">Cursive</option>
               </select>
             </div>
 
