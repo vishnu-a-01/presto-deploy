@@ -18,8 +18,12 @@ export default function Presentation() {
   const [showEditThumbnail, setShowEditThumbnail] = useState(false);
   const [error, setErrorMessage] = useState<string | null>(null);
 
+  const params = new URLSearchParams(window.location.search);
+  const slideParam = params.get("slide");
   const [slides, setSlides] = useState<Slides>({});
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(
+    Math.max(Number(slideParam) - 1, 0) || 0,
+  );
 
   const [showAddElementModal, setShowAddElementModal] =
     useState<ElementType>("");
@@ -42,6 +46,9 @@ export default function Presentation() {
   const [currentlyEditingElement, setEditingElement] =
     useState<SlideElement>(emptyElement);
 
+  const orderedSlides = Object.values(slides).sort(
+    (a, b) => a.position - b.position,
+  );
   useEffect(() => {
     const loadData = () => {
       const presentations = JSON.parse(
@@ -65,9 +72,32 @@ export default function Presentation() {
     loadData();
   }, []);
 
-  const orderedSlides = Object.values(slides).sort(
-    (a, b) => a.position - b.position,
-  );
+  useEffect(() => {
+    const loadIndex = () => {
+      if (orderedSlides.length === 0) return;
+      if (slideParam !== null) {
+        const index = Math.min(
+          Math.max(parseInt(slideParam, 10) - 1, 0),
+          orderedSlides.length - 1,
+        );
+        setCurrentIndex(index);
+      }
+    };
+    loadIndex();
+  }, [slides]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("slide", String(currentIndex + 1)); // store as 1-based
+
+    navigate(
+      {
+        pathname: window.location.pathname,
+        search: params.toString(),
+      },
+      { replace: true },
+    );
+  }, [currentIndex]);
 
   const getCurrentSlide = () => orderedSlides[currentIndex];
 
